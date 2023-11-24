@@ -12,4 +12,15 @@ export class ItemDto {
     public productionOrder?: number;
 
     public isMultiple?: boolean;
+
+    public toItem(): Item {
+        return {
+            itemNumber: this.itemNumber,
+            safetyStock: this.safetyStock,
+            warehouseStock: this.warehouseStock,            
+            waitingQueue: this.waitingQueue,
+            productionOrder: this.productionOrder,
+            isMultiple: this.isMultiple,
+        };
+    }
 }
