@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 import { Injectable } from '@nestjs/common';
 import { ForecastContainerDto, ForecastDto, ItemContainerDto, ItemDto } from '../dto';
 import { ItemContainer } from 'src/entity';
