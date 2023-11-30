@@ -1,3 +1,6 @@
+import { Item } from "src/entity/item.entity";
+
+/* eslint-disable prettier/prettier */
 export class ItemDto {
     public itemNumber: number;
 
