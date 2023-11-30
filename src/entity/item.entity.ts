@@ -1,20 +1,10 @@
-import {
-    Entity,
-    Column,
-    PrimaryColumn,
-    Tree,
-    TreeChildren,
-    TreeParent,
-    JoinTable,
-    ManyToMany
-} from 'typeorm';
+import { Entity, Column, PrimaryColumn, Tree, TreeChildren, TreeParent, JoinTable, ManyToMany } from 'typeorm';
 import { WorkingStation } from './workingStation.entity';
 import { PurchasedItem } from './purchasedItem.entity';
 
 @Entity()
-@Tree()
+@Tree('nested-set')
 export class Item {
-    
     @PrimaryColumn()
     public itemNumber: number;
 
@@ -36,10 +26,10 @@ export class Item {
     @Column()
     public isMultiple?: boolean;
 
-    @TreeChildren
+    @TreeChildren()
     public consistsOf: Item[];
 
-    @TreeParent
+    @TreeParent()
     public parentItem: Item;
 
     @ManyToMany(() => WorkingStation, (workingStation) => workingStation.items)
