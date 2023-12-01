@@ -78,7 +78,7 @@ Nest is [MIT licensed](LICENSE).
    _docker pull mcr.microsoft.com/mssql/server:2022-latest_
 
 2. Docker image initial start
-   Use _docker run -e "ACCEPT_EULA=Y" -e "MSSQL_SA_PASSWORD=<YourStrong@Passw0rd>" -p 1433:1433 --name sql1 --hostname sql1 -d mcr.microsoft.com/mssql/server:2022-latest_
+   Use: *\_docker run -e "ACCEPT_EULA=Y" -e "MSSQL_SA_PASSWORD=<YourStrong@Passw0rd>" -p 1433:1433 --name sql1 --hostname sql1 -d mcr.microsoft.com/mssql/*server:2022-latest\_
 
     Password: 8 characters, upper- and lower-case letters and numbers (0-9) needed
 
@@ -86,10 +86,10 @@ Nest is [MIT licensed](LICENSE).
    docker ps -a
 
 4. Ready for connection
-   Use _docker exec -t sql1 cat /var/opt/mssql/log/errorlog | grep connection_ to check error protocols.
+   Use: _docker exec -t sql1 cat /var/opt/mssql/log/errorlog | grep connection_ to check error protocols.
    If the last Notfication says: **SQL Server is now ready for client connections. This is an informational message; no user action is required**
    then the container is ready to go.
 
 5. Stopping the container
 
-Use _docker stop sql1_
+    Use: _docker stop sql1_
