@@ -1,5 +1,1 @@
-export class QueueDto {
-
-
-
-}
+export class QueueDto {}

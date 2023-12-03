@@ -1,10 +1,9 @@
-import { CapacityForItemDto } from "./capacityForItem.dto";
+import { CapacityForItemDto } from './capacityForItem.dto';
 
 /**
  * DTO zur Übertragung des Kapazitätsbedarfs für eine Arbeitsstation an das Frontend
  */
 export class WorkingStationCapacityDto {
-
     public workingStationNumber: number;
 
     public capacityProductionOrders?: CapacityForItemDto[];
@@ -12,7 +11,6 @@ export class WorkingStationCapacityDto {
     public capacityWaitingList?: CapacityForItemDto[];
 
     public constructor(workingStationNumber: number) {
-
         this.workingStationNumber = workingStationNumber;
 
         this.capacityProductionOrders = null;
@@ -22,9 +20,16 @@ export class WorkingStationCapacityDto {
         return this;
     }
 
-    public addCapacityForItem(itemNumber: number, orderAmount: number, setupTime: number, processingTime: number) : void {
-        if (this.capacityProductionOrders == null) {
-            this.capacityProductionOrders = [new CapacityForItemDto(itemNumber, orderAmount, processingTime, setupTime)];
+    public addCapacityForItem(
+        itemNumber: number,
+        orderAmount: number,
+        setupTime: number,
+        processingTime: number,
+    ): void {
+        if (this.capacityProductionOrders === null) {
+            this.capacityProductionOrders = [
+                new CapacityForItemDto(itemNumber, orderAmount, processingTime, setupTime),
+            ];
         }
         this.capacityProductionOrders.push(new CapacityForItemDto(itemNumber, orderAmount, processingTime, setupTime));
     }

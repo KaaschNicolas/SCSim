@@ -1,4 +1,14 @@
-import { Entity, Column, PrimaryColumn, Tree, TreeChildren, TreeParent, JoinTable, ManyToMany, OneToMany } from 'typeorm';
+import {
+    Entity,
+    Column,
+    PrimaryColumn,
+    Tree,
+    TreeChildren,
+    TreeParent,
+    JoinTable,
+    ManyToMany,
+    OneToMany,
+} from 'typeorm';
 import { PurchasedItem } from './purchasedItem.entity';
 import { ProductionProcess } from './productionProcess.entity';
 
@@ -32,7 +42,7 @@ export class Item {
     @TreeParent()
     public parentItem: Item;
 
-    @OneToMany(()=> ProductionProcess, productionProcess => productionProcess.item)
+    @OneToMany(() => ProductionProcess, (productionProcess) => productionProcess.item)
     public productionProcesses: ProductionProcess[];
 
     @ManyToMany(() => PurchasedItem, (purchasedItem) => purchasedItem.items)

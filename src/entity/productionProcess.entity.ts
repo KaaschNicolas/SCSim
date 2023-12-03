@@ -1,4 +1,14 @@
-import { Entity, PrimaryGeneratedColumn, Column, PrimaryColumn, Tree, TreeChildren, TreeParent, JoinTable, ManyToOne } from 'typeorm';
+import {
+    Entity,
+    PrimaryGeneratedColumn,
+    Column,
+    PrimaryColumn,
+    Tree,
+    TreeChildren,
+    TreeParent,
+    JoinTable,
+    ManyToOne,
+} from 'typeorm';
 import { Item } from './item.entity';
 import { WorkingStation } from './workingStation.entity';
 
@@ -12,7 +22,7 @@ export class ProductionProcess {
     public productionprocessId: number;
 
     @Column()
-    public itemId: number;	
+    public itemId: number;
 
     @Column()
     public workingStationId: number;
@@ -25,9 +35,7 @@ export class ProductionProcess {
 
     @ManyToOne(() => Item, (item) => item.productionProcesses)
     public item: Item;
-    
+
     @ManyToOne(() => WorkingStation, (workingStation) => workingStation.productionProcesses)
     public workingStation: WorkingStation;
 }
-
-

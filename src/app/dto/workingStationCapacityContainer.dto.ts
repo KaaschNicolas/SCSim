@@ -1,10 +1,9 @@
-import { WorkingStationCapacityDto } from "./workingStationCapacity.dto";
+import { WorkingStationCapacityDto } from './workingStationCapacity.dto';
 
 /**
  * DTO um alle Informationen für die Darstellung des Kapazitätsbedarf darstellen zu können
  */
 export class WorkingStationCapacityContainerDto {
-
     public workingStationCapacities: WorkingStationCapacityDto[];
 
     public constructor() {
@@ -23,7 +22,7 @@ export class WorkingStationCapacityContainerDto {
             new WorkingStationCapacityDto(12),
             new WorkingStationCapacityDto(13),
             new WorkingStationCapacityDto(14),
-            new WorkingStationCapacityDto(15)
-        ]
+            new WorkingStationCapacityDto(15),
+        ];
     }
 }
