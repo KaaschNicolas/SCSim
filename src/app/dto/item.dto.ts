@@ -24,6 +24,11 @@ export class ItemDto {
             waitingQueue: this.waitingQueue,
             productionOrder: this.productionOrder,
             isMultiple: this.isMultiple,
+            workInProgress: null,
+            consistsOf: null,
+            parentItem: null,
+            productionProcesses: null,
+            purchasedItems: null,
         };
     }
 }

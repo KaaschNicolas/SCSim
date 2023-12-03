@@ -38,4 +38,8 @@ export class ProductionProcess {
 
     @ManyToOne(() => WorkingStation, (workingStation) => workingStation.productionProcesses)
     public workingStation: WorkingStation;
+
+    constructor(item: Partial<ProductionProcess>) {
+        Object.assign(this, item);
+    }
 }

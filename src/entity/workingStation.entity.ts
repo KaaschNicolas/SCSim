@@ -9,4 +9,8 @@ export class WorkingStation {
 
     @OneToMany(() => ProductionProcess, (productionProcess) => productionProcess.workingStation)
     public productionProcesses: ProductionProcess[];
+
+    constructor(item: Partial<WorkingStation>) {
+        Object.assign(this, item);
+    }
 }
