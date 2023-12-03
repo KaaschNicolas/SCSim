@@ -1,5 +1,5 @@
 import { DataSource } from 'typeorm';
-import { Item, PurchasedItem, WorkingStation } from './entity';
+import WorkingStation, { Item, PurchasedItem } from './entity';
 
 export const AppDataSource = new DataSource({
     type: 'mssql',
