@@ -1,5 +1,4 @@
 export class OrderDto {
-    
     public article: string; //article object?
 
     public quantity: number;

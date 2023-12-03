@@ -2,13 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { ForecastContainerDto, ForecastDto, ItemContainerDto, ItemDto } from '../dto';
 import { ItemContainer } from 'src/entity';
 
-
 @Injectable()
 export class BomService {
-
     public disolveBom(forecast: ForecastContainerDto, itemContainer: ItemContainerDto): ItemContainer {
-
-        itemContainer.itemList.forEach(element => {
+        itemContainer.itemList.forEach((element) => {
             switch (element.itemNumber) {
                 case 26:
                     element.isMultiple = true;
@@ -77,9 +74,9 @@ export class BomService {
     public calculateProductionOrder(itemDto: ItemDto, forecast?: ForecastContainerDto, forecastDto?: ForecastDto) {
         if (itemDto.isMultiple) {
             itemDto.productionOrder = itemDto.safetyStock - itemDto.warehouseStock;
-            forecast.forecasts.forEach(it => itemDto.productionOrder += it.forecast);
+            forecast.forecasts.forEach((it) => (itemDto.productionOrder += it.forecast));
         } else {
-            itemDto.productionOrder = forecastDto.forecast + itemDto.safetyStock - itemDto.warehouseStock
+            itemDto.productionOrder = forecastDto.forecast + itemDto.safetyStock - itemDto.warehouseStock;
         }
     }
 }

@@ -1,18 +1,12 @@
-import {
-    Entity,
-    PrimaryColumn,
-    ManyToMany,
-    JoinTable
-} from 'typeorm';
+import { Entity, PrimaryColumn, OneToMany } from 'typeorm';
 import { Item } from './item.entity';
+import { ProductionProcess } from './productionProcess.entity';
 
 @Entity()
 export class WorkingStation {
-    
     @PrimaryColumn()
     public number: number;
 
-    @ManyToMany(() => Item, (item) => item.workingStations)
-    @JoinTable()
-    public items: Item[];
+    @OneToMany(() => ProductionProcess, (productionProcess) => productionProcess.workingStation)
+    public productionProcesses: ProductionProcess[];
 }

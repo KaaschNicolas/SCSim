@@ -1,6 +1,16 @@
-import { Entity, Column, PrimaryColumn, Tree, TreeChildren, TreeParent, JoinTable, ManyToMany } from 'typeorm';
-import { WorkingStation } from './workingStation.entity';
+import {
+    Entity,
+    Column,
+    PrimaryColumn,
+    Tree,
+    TreeChildren,
+    TreeParent,
+    JoinTable,
+    ManyToMany,
+    OneToMany,
+} from 'typeorm';
 import { PurchasedItem } from './purchasedItem.entity';
+import { ProductionProcess } from './productionProcess.entity';
 
 @Entity()
 @Tree('nested-set')
@@ -32,8 +42,8 @@ export class Item {
     @TreeParent()
     public parentItem: Item;
 
-    @ManyToMany(() => WorkingStation, (workingStation) => workingStation.items)
-    public workingStations: WorkingStation[];
+    @OneToMany(() => ProductionProcess, (productionProcess) => productionProcess.item)
+    public productionProcesses: ProductionProcess[];
 
     @ManyToMany(() => PurchasedItem, (purchasedItem) => purchasedItem.items)
     @JoinTable()

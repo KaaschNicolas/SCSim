@@ -1,4 +1,4 @@
-import { Item } from "src/entity/item.entity";
+import { Item } from 'src/entity/item.entity';
 
 /* eslint-disable prettier/prettier */
 export class ItemDto {
@@ -20,7 +20,7 @@ export class ItemDto {
         return {
             itemNumber: this.itemNumber,
             safetyStock: this.safetyStock,
-            warehouseStock: this.warehouseStock,            
+            warehouseStock: this.warehouseStock,
             waitingQueue: this.waitingQueue,
             productionOrder: this.productionOrder,
             isMultiple: this.isMultiple,

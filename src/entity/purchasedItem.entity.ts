@@ -1,14 +1,8 @@
-import {
-    Entity,
-    PrimaryColumn,
-    Column,
-    ManyToMany,
-} from 'typeorm';
+import { Entity, PrimaryColumn, Column, ManyToMany } from 'typeorm';
 import { Item } from './item.entity';
 
 @Entity()
 export class PurchasedItem {
-    
     @PrimaryColumn()
     public number: number;
 

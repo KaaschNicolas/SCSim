@@ -1,6 +1,5 @@
-import { QueueDto } from "./queue.dto";
+import { QueueDto } from './queue.dto';
 
 export class QueueContainer {
-
     public queues: QueueDto[];
 }
