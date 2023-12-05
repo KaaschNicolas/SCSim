@@ -17,4 +17,8 @@ export class PurchasedItem {
 
     @ManyToMany(() => Item, (item) => item.purchasedItems)
     public items: Item[];
+
+    constructor(item: Partial<PurchasedItem>) {
+        Object.assign(this, item);
+    }
 }

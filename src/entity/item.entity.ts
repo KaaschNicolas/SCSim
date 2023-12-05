@@ -48,4 +48,8 @@ export class Item {
     @ManyToMany(() => PurchasedItem, (purchasedItem) => purchasedItem.items)
     @JoinTable()
     public purchasedItems: PurchasedItem[];
+
+    constructor(item: Partial<Item>) {
+        Object.assign(this, item);
+    }
 }
