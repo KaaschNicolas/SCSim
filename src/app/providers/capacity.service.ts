@@ -6,7 +6,7 @@ import { WorkingStationCapacityContainerDto } from '../dto/workingStationCapacit
 
 @Injectable()
 export class CapacityService {
-    public async capacityNew(): Promise<WorkingStationCapacityContainerDto> {
+    public async capacityNew() {
         let capacityNew = new WorkingStationCapacityContainerDto();
 
         //Items die der BOM Service in DB gespeichert hat abrufen

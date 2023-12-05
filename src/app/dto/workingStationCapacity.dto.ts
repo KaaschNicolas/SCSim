@@ -10,6 +10,8 @@ export class WorkingStationCapacityDto {
 
     public capacityWaitingList?: CapacityForItemDto[];
 
+    public capacityOrdersInWork?: CapacityForItemDto[];
+
     public constructor(workingStationNumber: number) {
         this.workingStationNumber = workingStationNumber;
 

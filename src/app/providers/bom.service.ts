@@ -20,6 +20,7 @@ export class BomService {
     }
 
     public async findAll() {
+        //BOM logic here
         return await this.itemRepository.find();
     }
 
