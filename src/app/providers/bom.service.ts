@@ -41,9 +41,14 @@ export class BomService {
     }
 
     private async resolveChildren(item: Item, parentProdctionOrder: number) {
-        //await this.setChildrenProductionOrder(item);
-        item.productionOrder = parentProdctionOrder;
-        item.productionOrder += item.safetyStock - item.warehouseStock - item.waitingQueue - item.workInProgress;
+        if (item.isMultiple) {
+            item.productionOrder = parentProdctionOrder;
+            item.productionOrder +=
+                item.safetyStock - item.warehouseStock / 3 - item.waitingQueue - item.workInProgress;
+        } else {
+            item.productionOrder = parentProdctionOrder;
+            item.productionOrder += item.safetyStock - item.warehouseStock - item.waitingQueue - item.workInProgress;
+        }
         await this.entityManager.save(item);
 
         let childreen = await this.entityManager.getTreeRepository(Item).findDescendants(item);
