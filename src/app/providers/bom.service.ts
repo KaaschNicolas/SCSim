@@ -24,7 +24,7 @@ export class BomService {
     }
 
     public async findAll() {
-        this.resolveBom();
+        await this.resolveBom();
         return await this.itemRepository.find();
     }
 

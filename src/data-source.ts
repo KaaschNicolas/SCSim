@@ -13,4 +13,8 @@ export const AppDataSource = new DataSource({
     entities: [Item, PurchasedItem, WorkingStation],
     subscribers: [],
     migrations: [],
+    options: {
+        encrypt: false, // for Azure
+        trustServerCertificate: true, // true for local dev / self-signed certs
+    },
 });
