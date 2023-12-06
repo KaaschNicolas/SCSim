@@ -6,12 +6,12 @@ import { BomService } from '../providers';
 export class ItemController {
     constructor(private readonly bomService: BomService) {}
 
-    @Post()
-    create(@Body() itemContainerDto: ItemContainerDto) {
-        return this.bomService.createItems(itemContainerDto);
+    @Post('/upsertItems')
+    upsert(@Body() itemContainerDto: ItemContainerDto) {
+        return this.bomService.upsertItems(itemContainerDto);
     }
 
-    @Get()
+    @Get('/getCalculatedBom')
     findAll() {
         return this.bomService.findAll();
     }
