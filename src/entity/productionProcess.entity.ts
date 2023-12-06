@@ -33,6 +33,9 @@ export class ProductionProcess {
     @Column()
     public processingTime: number;
 
+    @TreeChildren()
+    public children: ProductionProcess;
+
     @ManyToOne(() => Item, (item) => item.productionProcesses)
     public item: Item;
 

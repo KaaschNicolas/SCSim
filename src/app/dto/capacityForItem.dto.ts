@@ -8,9 +8,9 @@ export class CapacityForItemDto {
 
     public processingTime: number;
 
-    public setupTime: number;
+    public setupTime?: number;
 
-    public constructor(itemNumber: number, orderAmount: number, setupTime: number, processingTime: number) {
+    public constructor(itemNumber: number, orderAmount: number, setupTime: number = 0, processingTime: number) {
         this.itemNumber = itemNumber;
 
         this.orderAmount = orderAmount;
