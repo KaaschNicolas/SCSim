@@ -1,11 +1,17 @@
 import { ProductionProcess } from 'src/entity/productionProcess.entity';
 import { AppDataSource } from './../../data-source';
 import { Item } from 'src/entity';
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { WorkingStationCapacityContainerDto } from '../dto/workingStationCapacityContainer.dto';
 
 @Injectable()
 export class CapacityService {
+    private readonly logger;
+
+    constructor() {
+        this.logger = new Logger(CapacityService.name);
+    }
+
     public async capacityNew() {
         let capacityNew = new WorkingStationCapacityContainerDto();
 
