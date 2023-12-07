@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { EntityManager, Repository } from 'typeorm';
 import { ItemContainerDto } from '../dto';
 import { Item } from 'src/entity';
@@ -6,13 +6,18 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class BomService {
+    private readonly logger;
+
     constructor(
         @InjectRepository(Item)
         private readonly itemRepository: Repository<Item>,
         private readonly entityManager: EntityManager,
-    ) {}
+    ) {
+        this.logger = new Logger(BomService.name);
+    }
 
     public async upsertItems(itemContainerDto: ItemContainerDto) {
+        this.logger.log('Upserting Items');
         itemContainerDto.itemList.forEach(async (it) => {
             let item = new Item(it);
             await this.entityManager.save(item);
