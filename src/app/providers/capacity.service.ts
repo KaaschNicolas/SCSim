@@ -10,10 +10,6 @@ import { WaitingList } from 'src/entity/waitingList.entity';
 export class CapacityService {
     private readonly logger;
 
-    constructor() {
-        this.logger = new Logger(CapacityService.name);
-    }
-
     constructor(
         @InjectRepository(Item)
         private readonly itemRepository: Repository<Item>,
@@ -22,13 +18,15 @@ export class CapacityService {
         @InjectRepository(WaitingList)
         private readonly waitingListRepository: Repository<WaitingList>,
         private readonly entityManager: EntityManager,
-    ) {}
+    ) {
+        this.logger = new Logger(CapacityService.name);
+    }
 
     public async create() {
         let capacityContainer = new WorkingStationCapacityContainerDto();
 
+        this.logger.log('CapacityService: create()');
         //Items die der BOM Service in DB gespeichert hat abrufen
-
         const items = await this.itemRepository.find({
             select: {
                 itemNumber: true,
@@ -57,6 +55,7 @@ export class CapacityService {
         return await this.capacityWaitingList(capacityContainer);
     }
     public async capacityWaitingList(capacityContainer: WorkingStationCapacityContainerDto) {
+        this.logger.log('CapacityService: capacityWaitingList()');
         const waitingLists = await this.waitingListRepository.find({
             where: {
                 isInWork: false,
@@ -81,6 +80,8 @@ export class CapacityService {
         return await this.capacityOrdersInWork(capacityContainer);
     }
     public async capacityOrdersInWork(capacityContainer: WorkingStationCapacityContainerDto) {
+        this.logger.log('CapacityService: capacityOrdersInWork()');
+
         await (
             await this.waitingListRepository.find({
                 where: {
