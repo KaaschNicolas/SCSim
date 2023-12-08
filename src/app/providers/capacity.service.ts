@@ -1,13 +1,19 @@
 import { ProductionProcess } from 'src/entity/productionProcess.entity';
 import { Repository, EntityManager } from 'typeorm';
 import { Item } from 'src/entity';
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { WorkingStationCapacityContainerDto } from '../dto/workingStationCapacityContainer.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { WaitingList } from 'src/entity/waitingList.entity';
 
 @Injectable()
 export class CapacityService {
+    private readonly logger;
+
+    constructor() {
+        this.logger = new Logger(CapacityService.name);
+    }
+
     constructor(
         @InjectRepository(Item)
         private readonly itemRepository: Repository<Item>,
