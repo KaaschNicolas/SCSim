@@ -6,7 +6,7 @@ export class workingStationCapacityController {
     constructor(private readonly capacityService: CapacityService) {}
 
     @Get('')
-    getAll() {
-        return;
+    async getAll() {
+        return await this.capacityService.create();
     }
 }

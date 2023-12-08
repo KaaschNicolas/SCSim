@@ -21,12 +21,6 @@ export class WorkingStationCapacityDto {
     public constructor(workingStationNumber: number) {
         this.workingStationNumber = workingStationNumber;
 
-        this.capacityProductionOrders = null;
-
-        this.capacityWaitingList = null;
-
-        this.capacityOrdersInWork = null;
-
         return this;
     }
 
@@ -43,6 +37,7 @@ export class WorkingStationCapacityDto {
         }
         this.capacityProductionOrders.push(new CapacityForItemDto(itemNumber, orderAmount, setupTime, processingTime));
     }
+
     public addCapacityForWaitingList(
         itemNumber: number,
         orderAmount: number,
@@ -54,6 +49,7 @@ export class WorkingStationCapacityDto {
         }
         this.capacityWaitingList.push(new CapacityForItemDto(itemNumber, orderAmount, setupTime, processingTime));
     }
+
     public addCapacityOrdersInWork(
         itemNumber: number,
         orderAmount: number,
@@ -65,6 +61,7 @@ export class WorkingStationCapacityDto {
         }
         this.capacityOrdersInWork.push(new CapacityForItemDto(itemNumber, orderAmount, setupTime, processingTime));
     }
+
     calculateTotalCapacity() {
         let sum: number = 0;
         if (this.capacityProductionOrders !== null) {
@@ -83,6 +80,7 @@ export class WorkingStationCapacityDto {
             });
         }
     }
+
     calculateTotalShiftsAndOvertime() {
         if (this.totalCapacity <= 3600) {
             this.shifts = 1;

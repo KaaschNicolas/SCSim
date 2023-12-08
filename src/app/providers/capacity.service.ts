@@ -18,12 +18,11 @@ export class CapacityService {
         private readonly entityManager: EntityManager,
     ) {}
 
-    public async capacityNew() {
+    public async create() {
         let capacityContainer = new WorkingStationCapacityContainerDto();
 
         //Items die der BOM Service in DB gespeichert hat abrufen
 
-        //const itemRepository = AppDataSource.getRepository(Item);
         const items = await this.itemRepository.find({
             select: {
                 itemNumber: true,
@@ -49,7 +48,7 @@ export class CapacityService {
                 });
             }
         });
-        return capacityContainer;
+        return await this.capacityWaitingList(capacityContainer);
     }
     public async capacityWaitingList(capacityContainer: WorkingStationCapacityContainerDto) {
         const waitingLists = await this.waitingListRepository.find({
@@ -73,15 +72,16 @@ export class CapacityService {
                 waitingList.timeNeed,
             );
         });
-        return capacityContainer;
+        return await this.capacityOrdersInWork(capacityContainer);
     }
     public async capacityOrdersInWork(capacityContainer: WorkingStationCapacityContainerDto) {
-        const ordersInWork = await this.waitingListRepository.find({
-            where: {
-                isInWork: true,
-            },
-        });
-        ordersInWork.forEach(async (orderInWork) => {
+        await (
+            await this.waitingListRepository.find({
+                where: {
+                    isInWork: true,
+                },
+            })
+        ).forEach(async (orderInWork) => {
             capacityContainer[orderInWork.workingStationId - 1].addCapacityOrdersInWork(
                 orderInWork.itemId,
                 orderInWork.amount,
