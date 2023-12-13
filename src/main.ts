@@ -8,6 +8,8 @@ async function bootstrap() {
     });
     await app.listen(3000);
 
+    console.log('It works');
+
     // AppDataSource.initialize()
     //     .then(() => {
     //         // here you can start to work with your database

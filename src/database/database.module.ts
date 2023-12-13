@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Global, Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Item } from 'src/entity/item.entity';
@@ -7,7 +7,7 @@ import { PurchasedItem } from 'src/entity/purchasedItem.entity';
 import { WorkingStation } from 'src/entity/workingStation.entity';
 
 
-
+@Global()
 @Module({
     imports: [
         TypeOrmModule.forRootAsync({
