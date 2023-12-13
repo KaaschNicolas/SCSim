@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, TreeChildren } from 'typeorm';
 import { Item } from './item.entity';
 import { WorkingStation } from './workingStation.entity';
 

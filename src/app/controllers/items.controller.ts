@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Param, Post } from '@nestjs/common';
-import { ItemContainerDto } from '../dto';
-import { BomService } from '../providers';
+import { BomService } from '../providers/bom.service';
+import { ItemContainerDto } from '../dto/itemContainer.dto';
 
 @Controller('items')
 export class ItemController {
