@@ -1,16 +1,19 @@
 import { DataSource } from 'typeorm';
-import { Item, PurchasedItem, WorkingStation } from './entity';
+import { Item } from './entity/item.entity';
+import { PurchasedItem } from './entity/purchasedItem.entity';
+import { WorkingStation } from './entity/workingStation.entity';
+import { ProductionProcess } from './entity/productionProcess.entity';
 
 export const AppDataSource = new DataSource({
     type: 'mssql',
     host: 'localhost',
     port: 1433,
     username: 'sa',
-    password: 'Nicolas!1234',
+    password: 'Test!1234',
     database: 'test',
     synchronize: true,
     logging: true,
-    entities: [Item, PurchasedItem, WorkingStation],
+    entities: [Item, PurchasedItem, WorkingStation, ProductionProcess],
     subscribers: [],
     migrations: [],
     options: {
