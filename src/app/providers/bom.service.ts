@@ -1,8 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { EntityManager, Repository } from 'typeorm';
-import { ItemContainerDto } from '../dto';
-import { Item } from 'src/entity';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Item } from 'src/entity/item.entity';
+import { ItemContainerDto } from '../dto/itemContainer.dto';
 
 @Injectable()
 export class BomService {

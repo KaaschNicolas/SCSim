@@ -1,4 +1,4 @@
-import { DataSource } from 'typeorm';
+/*import { DataSource } from 'typeorm';
 import { Item } from './entity/item.entity';
 import { PurchasedItem } from './entity/purchasedItem.entity';
 import { WorkingStation } from './entity/workingStation.entity';
@@ -9,8 +9,8 @@ export const AppDataSource = new DataSource({
     host: 'localhost',
     port: 1433,
     username: 'sa',
-    password: 'Test!1234',
-    database: 'test',
+    password: 'Pass1234',
+    database: 'sql1',
     synchronize: true,
     logging: true,
     entities: [Item, PurchasedItem, WorkingStation, ProductionProcess],
@@ -21,3 +21,4 @@ export const AppDataSource = new DataSource({
         trustServerCertificate: true, // true for local dev / self-signed certs
     },
 });
+*/
