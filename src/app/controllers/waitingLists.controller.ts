@@ -2,7 +2,7 @@ import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { WaitingListService } from '../providers/waitingList.service';
 import { WaitingListContainerDto } from '../dto/waitingListContainer.dto';
 
-@Controller('items')
+@Controller('waitingList')
 export class WaitingListController {
     constructor(private readonly waitingListService: WaitingListService) {}
 
