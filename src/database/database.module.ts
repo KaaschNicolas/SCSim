@@ -2,6 +2,7 @@ import { Global, Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Item } from 'src/entity/item.entity';
+import { ItemPurchasedItem } from 'src/entity/itemPurchasedItem.entity';
 import { ProductionProcess } from 'src/entity/productionProcess.entity';
 import { PurchasedItem } from 'src/entity/purchasedItem.entity';
 import { WorkingStation } from 'src/entity/workingStation.entity';
@@ -12,7 +13,7 @@ import { WorkingStation } from 'src/entity/workingStation.entity';
         TypeOrmModule.forRootAsync({
             useFactory: (config: ConfigService) => ({
                 type: 'mssql',
-                entities: [Item, PurchasedItem, WorkingStation, ProductionProcess],
+                entities: [Item, PurchasedItem, WorkingStation, ProductionProcess, ItemPurchasedItem],
                 host: config.getOrThrow('SQL_HOST'),
                 port: 1433,
                 username: config.getOrThrow('SQL_USERNAME'),

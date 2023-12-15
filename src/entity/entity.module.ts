@@ -5,8 +5,19 @@ import { PurchasedItem } from './purchasedItem.entity';
 import { WorkingStation } from './workingStation.entity';
 import { Module } from '@nestjs/common';
 import { WaitingList } from './waitingList.entity';
+import { ItemPurchasedItem } from './itemPurchasedItem.entity';
 
 @Module({
-    imports: [TypeOrmModule.forFeature([Item, ProductionProcess, PurchasedItem, WorkingStation, WaitingList])],
+    imports: [
+        TypeOrmModule.forFeature([
+            Item,
+            ProductionProcess,
+            PurchasedItem,
+            WorkingStation,
+            WaitingList,
+            ItemPurchasedItem,
+        ]),
+    ],
+    exports,
 })
 export class EntityModule {}

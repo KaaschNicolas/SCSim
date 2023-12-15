@@ -5,7 +5,7 @@ import { Item } from 'src/entity/item.entity';
 import { ItemContainerDto } from '../dto/itemContainer.dto';
 
 @Injectable()
-export class BomService {
+export class ItemService {
     private readonly logger;
 
     constructor(
@@ -13,7 +13,7 @@ export class BomService {
         private readonly itemRepository: Repository<Item>,
         private readonly entityManager: EntityManager,
     ) {
-        this.logger = new Logger(BomService.name);
+        this.logger = new Logger(ItemService.name);
     }
 
     public async upsertItems(itemContainerDto: ItemContainerDto) {
@@ -24,8 +24,8 @@ export class BomService {
         });
     }
 
-    public async findOne(itemNumber: number) {
-        return await this.itemRepository.findOneBy({ itemNumber });
+    public async findById(itemNumber: number) {
+        return await this.itemRepository.findOneBy({ itemNumber: itemNumber });
     }
 
     public async findAll() {
@@ -33,6 +33,7 @@ export class BomService {
         return await this.itemRepository.find();
     }
 
+    //TODO Jan und Lukas müssen wissen, dass sie waitingQueue und workInProgress mit angeben
     private async resolveBom() {
         //BOM logic here
         let products = await this.itemRepository.find({
