@@ -6,10 +6,12 @@ import { DatabaseModule } from './database/database.module';
 import { BomModule } from './app/modules/bom.module';
 import { CapacityModule } from './app/modules/capacity.module';
 import { ProviderModule } from './app/providers/provider.module';
+import { ItemController } from './app/controllers/items.controller';
+import { BomService } from './app/providers/bom.service';
 
 @Module({
     imports: [ConfigModule.forRoot({ isGlobal: true }), DatabaseModule, BomModule, CapacityModule],
-    controllers: [AppController],
-    providers: [ProviderModule],
+    controllers: [ItemController],
+    providers: [ProviderModule, BomService],
 })
 export class AppModule {}

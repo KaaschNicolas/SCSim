@@ -6,7 +6,6 @@ import { ProductionProcess } from 'src/entity/productionProcess.entity';
 import { PurchasedItem } from 'src/entity/purchasedItem.entity';
 import { WorkingStation } from 'src/entity/workingStation.entity';
 
-
 @Global()
 @Module({
     imports: [
@@ -28,6 +27,6 @@ import { WorkingStation } from 'src/entity/workingStation.entity';
             inject: [ConfigService],
         }),
     ],
+    W,
 })
 export class DatabaseModule {}
-
