@@ -1,5 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
+import { DbPopulateService } from './app/providers/dbPopulate.service';
 import 'reflect-metadata';
 
 async function bootstrap() {
@@ -7,7 +8,8 @@ async function bootstrap() {
         logger: ['error', 'warn', 'debug'],
     });
     await app.listen(3000);
-
+    const dbPopulateService = app.get(DbPopulateService);
+    await dbPopulateService.populate();
     console.log('It works');
 
     // AppDataSource.initialize()
