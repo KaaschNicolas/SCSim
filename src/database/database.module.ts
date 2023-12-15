@@ -28,6 +28,5 @@ import { WorkingStation } from 'src/entity/workingStation.entity';
             inject: [ConfigService],
         }),
     ],
-    W,
 })
 export class DatabaseModule {}
