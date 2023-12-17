@@ -11,6 +11,7 @@ import {
 } from 'typeorm';
 import { PurchasedItem } from './purchasedItem.entity';
 import { ProductionProcess } from './productionProcess.entity';
+import { ItemPurchasedItem } from './itemPurchasedItem.entity';
 
 @Entity()
 @Tree('nested-set')
@@ -45,9 +46,8 @@ export class Item {
     @OneToMany(() => ProductionProcess, (productionProcess) => productionProcess.item)
     public productionProcesses: ProductionProcess[];
 
-    @ManyToMany(() => PurchasedItem, (purchasedItem) => purchasedItem.items)
-    @JoinTable()
-    public purchasedItems: PurchasedItem[];
+    @OneToMany(() => ItemPurchasedItem, (itemPurchasedItem) => itemPurchasedItem.item)
+    public itemPurchasedItems: ItemPurchasedItem[];
 
     constructor(item: Partial<Item>) {
         Object.assign(this, item);

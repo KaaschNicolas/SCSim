@@ -30,4 +30,12 @@ export class WaitingListService {
             },
         });
     }
+
+    public async getByItemId(itemId: number) {
+        return await this.waitingListRepository.find({
+            where: {
+                itemId: itemId,
+            },
+        });
+    }
 }

@@ -28,7 +28,7 @@ export class ItemDto {
             consistsOf: null,
             parentItem: null,
             productionProcesses: null,
-            purchasedItems: null,
+            itemPurchasedItems: null,
         };
     }
 }
