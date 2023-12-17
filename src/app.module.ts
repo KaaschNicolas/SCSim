@@ -5,13 +5,12 @@ import { ConfigModule } from '@nestjs/config';
 import { DatabaseModule } from './database/database.module';
 import { ItemModule } from './app/modules/item.module';
 import { CapacityModule } from './app/modules/capacity.module';
-import { ProviderModule } from './app/providers/provider.module';
-import { ItemController } from './app/controllers/items.controller';
-import { ItemService } from './app/providers/item.service';
+import { DbPopulateService } from './app/providers/dbPopulate.service';
+import { DbPopulateModule } from './app/modules/dbPopulate.module';
 
 @Module({
-    imports: [ConfigModule.forRoot({ isGlobal: true }), DatabaseModule, ItemModule, CapacityModule],
-    controllers: [ItemController],
-    providers: [ProviderModule, ItemService],
+    imports: [ConfigModule.forRoot({ isGlobal: true }), DatabaseModule, BomModule, CapacityModule, DbPopulateModule],
+    controllers: [AppController],
+    providers: [AppService],
 })
 export class AppModule {}
