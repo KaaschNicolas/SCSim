@@ -9,7 +9,7 @@ import { DbPopulateService } from './app/providers/dbPopulate.service';
 import { DbPopulateModule } from './app/modules/dbPopulate.module';
 
 @Module({
-    imports: [ConfigModule.forRoot({ isGlobal: true }), DatabaseModule, BomModule, CapacityModule, DbPopulateModule],
+    imports: [ConfigModule.forRoot({ isGlobal: true }), DatabaseModule, ItemModule, CapacityModule, DbPopulateModule],
     controllers: [AppController],
     providers: [AppService],
 })
