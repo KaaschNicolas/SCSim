@@ -3,7 +3,7 @@ import { PurchasedItemContainerDto } from '../dto/purchasedItemContainer.dto';
 import { PurchasedItemService } from '../providers/purchasedItem.service';
 
 @Controller('purchasedItems')
-export class ItemController {
+export class PurchasedItemController {
     constructor(private readonly purchasedItemService: PurchasedItemService) {}
 
     @Post('/upsertPurchasedItems')

@@ -35,7 +35,6 @@ export class ItemService {
         return await this.itemRepository.find();
     }
 
-    //TODO Jan und Lukas müssen wissen, dass sie waitingQueue und workInProgress mit angeben
     private async resolveBom() {
         let products = await this.itemRepository.find({
             where: [{ itemNumber: 1 }, { itemNumber: 2 }, { itemNumber: 3 }],
