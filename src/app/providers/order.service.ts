@@ -60,7 +60,8 @@ export class OrderService {
             },
         });
 
-        purchasedItem.calculatedPurchase = itemPurchasedItem.multiplier * item.productionOrder;
+        purchasedItem.calculatedPurchase =
+            itemPurchasedItem.multiplier * item.productionOrder - purchasedItem.warehouseStock;
 
         let waitingLists = await this.waitingListService.getByItemId(itemPurchasedItem.item.itemNumber);
 

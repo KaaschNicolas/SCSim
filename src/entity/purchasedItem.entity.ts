@@ -14,6 +14,9 @@ export class PurchasedItem {
     public costs: number;
 
     @Column()
+    public warehouseStock: number;
+
+    @Column()
     public calculatedPurchase: number;
 
     @OneToMany(() => ItemPurchasedItem, (itemPurchasedItem) => itemPurchasedItem.purchasedItem)

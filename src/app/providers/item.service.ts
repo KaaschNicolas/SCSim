@@ -3,6 +3,7 @@ import { EntityManager, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Item } from 'src/entity/item.entity';
 import { ItemContainerDto } from '../dto/itemContainer.dto';
+import { WaitingListService } from './waitingList.service';
 
 @Injectable()
 export class ItemService {
@@ -12,6 +13,7 @@ export class ItemService {
         @InjectRepository(Item)
         private readonly itemRepository: Repository<Item>,
         private readonly entityManager: EntityManager,
+        private readonly waitingListService: WaitingListService,
     ) {
         this.logger = new Logger(ItemService.name);
     }
@@ -35,7 +37,6 @@ export class ItemService {
 
     //TODO Jan und Lukas müssen wissen, dass sie waitingQueue und workInProgress mit angeben
     private async resolveBom() {
-        //BOM logic here
         let products = await this.itemRepository.find({
             where: [{ itemNumber: 1 }, { itemNumber: 2 }, { itemNumber: 3 }],
         });
@@ -47,14 +48,21 @@ export class ItemService {
     }
 
     private async resolveChildren(item: Item, parentProdctionOrder: number) {
+        let waitingListAmount = await this.waitingListService.getWaitingListAmountByItemId(item.itemNumber);
+
+        let workInProgress = await this.waitingListService.getWorkInProgressByItemId(item.itemNumber);
+
         if (item.isMultiple) {
             item.productionOrder = parentProdctionOrder;
-            item.productionOrder +=
-                item.safetyStock - item.warehouseStock / 3 - item.waitingQueue - item.workInProgress;
+            item.productionOrder += item.safetyStock - item.warehouseStock / 3 - waitingListAmount - workInProgress;
         } else {
             item.productionOrder = parentProdctionOrder;
-            item.productionOrder += item.safetyStock - item.warehouseStock - item.waitingQueue - item.workInProgress;
+            item.productionOrder += item.safetyStock - item.warehouseStock - waitingListAmount - workInProgress;
         }
+
+        item.waitingQueue = waitingListAmount;
+        item.workInProgress = workInProgress;
+
         await this.entityManager.save(item);
 
         let childreen = await this.entityManager.getTreeRepository(Item).findDescendants(item);
