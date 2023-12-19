@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, TreeChildren } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, TreeChildren, TreeParent, Tree } from 'typeorm';
 import { Item } from './item.entity';
 import { WorkingStation } from './workingStation.entity';
 
@@ -7,9 +7,10 @@ import { WorkingStation } from './workingStation.entity';
  */
 
 @Entity()
+@Tree('nested-set')
 export class ProductionProcess {
     @PrimaryGeneratedColumn()
-    public productionprocessId: number;
+    public productionProcessId: number;
 
     @Column()
     public itemId: number;
@@ -24,7 +25,10 @@ export class ProductionProcess {
     public processingTime: number;
 
     @TreeChildren()
-    public children: ProductionProcess;
+    children: ProductionProcess[];
+
+    @TreeParent()
+    parent: ProductionProcess;
 
     @ManyToOne(() => Item, (item) => item.productionProcesses)
     public item: Item;
