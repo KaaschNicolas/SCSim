@@ -8,9 +8,9 @@ export class ItemDto {
 
     public warehouseStock: number;
 
-    public waitingQueue: number;
+    public waitingQueue?: number;
 
-    public workInProgress: number;
+    public workInProgress?: number;
 
     public productionOrder?: number;
 

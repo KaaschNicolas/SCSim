@@ -38,4 +38,12 @@ export class WaitingListService {
             },
         });
     }
+
+    public async getWaitingListAmountByItemId(itemId: number) {
+        return await this.waitingListRepository.sum('amount', { itemId: itemId, isInWork: false });
+    }
+
+    public async getWorkInProgressByItemId(itemId: number) {
+        return await this.waitingListRepository.sum('amount', { itemId: itemId, isInWork: true });
+    }
 }
