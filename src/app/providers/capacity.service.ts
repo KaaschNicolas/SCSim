@@ -5,6 +5,7 @@ import { WorkingStationCapacityContainerDto } from '../dto/workingStationCapacit
 import { InjectRepository } from '@nestjs/typeorm';
 import { WaitingList } from 'src/entity/waitingList.entity';
 import { Item } from 'src/entity/item.entity';
+import { WorkingStation } from 'src/entity/workingStation.entity';
 
 @Injectable()
 export class CapacityService {
@@ -17,6 +18,8 @@ export class CapacityService {
         private readonly productionProcessRepository: Repository<ProductionProcess>,
         @InjectRepository(WaitingList)
         private readonly waitingListRepository: Repository<WaitingList>,
+        @InjectRepository(WorkingStation)
+        private readonly workingStationRepository: Repository<WorkingStation>,
         private readonly entityManager: EntityManager,
     ) {
         this.logger = new Logger(CapacityService.name);
@@ -39,12 +42,12 @@ export class CapacityService {
             if (item.productionOrder <= 0) {
             } else {
                 const productionProcesses = await this.productionProcessRepository.findBy({
-                    itemId: item.itemNumber,
+                    item: item,
                 });
                 //Hier werden die jeweiligen Zeiten für die einzelnen Produktionsaufträge den Arbeitsstationen hinzugefügt
                 productionProcesses.forEach((productionProcess) => {
-                    capacityContainer[productionProcess.workingStationId - 1].addCapacityForProductionOrder(
-                        productionProcess.itemId,
+                    capacityContainer[productionProcess.workingStation.number - 1].addCapacityForProductionOrder(
+                        productionProcess.item.itemNumber,
                         item.productionOrder,
                         productionProcess.setupTime,
                         productionProcess.processingTime * item.productionOrder,
@@ -70,8 +73,12 @@ export class CapacityService {
                         setupTime: true,
                     },
                     where: {
-                        itemId: waitingList.itemId,
-                        workingStationId: waitingList.workingStationId,
+                        item: await this.itemRepository.findOne({
+                            where: { itemNumber: waitingList.itemId },
+                        }),
+                        workingStation: await this.workingStationRepository.findOne({
+                            where: { number: waitingList.workingStationId },
+                        }),
                     },
                 }),
                 waitingList.timeNeed,
@@ -99,14 +106,18 @@ export class CapacityService {
                 await this.entityManager.getTreeRepository(ProductionProcess).findDescendants(
                     await this.productionProcessRepository.findOne({
                         where: {
-                            itemId: orderInWork.itemId,
-                            workingStationId: orderInWork.workingStationId,
+                            item: await this.itemRepository.findOne({
+                                where: { itemNumber: orderInWork.itemId },
+                            }),
+                            workingStation: await this.workingStationRepository.findOne({
+                                where: { number: orderInWork.workingStationId },
+                            }),
                         },
                     }),
                 )
             ).forEach(async (productionProcess) => {
-                capacityContainer[productionProcess.workingStationId - 1].addCapacityOrdersInWork(
-                    productionProcess.itemId,
+                capacityContainer[productionProcess.workingStation.number - 1].addCapacityOrdersInWork(
+                    productionProcess.item.itemNumber,
                     orderInWork.amount,
                     productionProcess.setupTime,
                     productionProcess.processingTime * orderInWork.amount,

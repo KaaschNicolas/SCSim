@@ -7,16 +7,10 @@ import { WorkingStation } from './workingStation.entity';
  */
 
 @Entity()
-@Tree('nested-set')
+@Tree('materialized-path')
 export class ProductionProcess {
     @PrimaryGeneratedColumn()
     public productionProcessId: number;
-
-    @Column()
-    public itemId: number;
-
-    @Column()
-    public workingStationId: number;
 
     @Column()
     public setupTime: number;

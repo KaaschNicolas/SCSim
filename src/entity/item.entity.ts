@@ -7,6 +7,7 @@ import {
     TreeParent,
     JoinTable,
     ManyToMany,
+    ManyToOne,
     OneToMany,
 } from 'typeorm';
 import { PurchasedItem } from './purchasedItem.entity';
@@ -14,7 +15,7 @@ import { ProductionProcess } from './productionProcess.entity';
 import { ItemPurchasedItem } from './itemPurchasedItem.entity';
 
 @Entity()
-@Tree('nested-set')
+@Tree('materialized-path')
 export class Item {
     @PrimaryColumn()
     public itemNumber: number;
