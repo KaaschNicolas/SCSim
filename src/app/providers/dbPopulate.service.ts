@@ -16,6 +16,7 @@ export class DbPopulateService {
         private readonly itemRepository: Repository<Item>,
         private readonly entityManager: EntityManager,
     ) {}
+
     private async findItem(itemNumber: number): Promise<Item | null> {
         return await this.itemRepository.findOne({ where: { itemNumber } });
     }
@@ -30,6 +31,7 @@ export class DbPopulateService {
         item.consistsOf = await Promise.all(consistsOfNumbers.map((num) => this.findItem(num)));
         await this.itemRepository.save(item);
     }
+
     public async populate(): Promise<void> {
         console.log('WorkingStationPopulateStarts');
         if ((await this.workingStationRepository.count()) === 0) {
@@ -47,36 +49,7 @@ export class DbPopulateService {
         console.log('WorkingStationPopulateEnded');
         console.log('ItemPopulateStarts');
         if ((await this.itemRepository.count()) === 0) {
-            const itemNumbers = [
-                1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28,
-                29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54,
-                55, 56, 57, 58, 59,
-            ];
-            for (const itemNumber of itemNumbers) {
-                await this.itemRepository.save(
-                    new Item({
-                        itemNumber: itemNumber,
-                        safetyStock: 0,
-                        warehouseStock: 0,
-                        waitingQueue: 0,
-                        workInProgress: 0,
-                        productionOrder: 0,
-                        isMultiple: false,
-                    }),
-                );
-            }
-            try {
-                await this.updateItemConsistsOf(1, [26, 51]);
-                await this.updateItemConsistsOf(51, [16, 17, 50]);
-                await this.updateItemConsistsOf(50, [4, 10, 49]);
-                await this.updateItemConsistsOf(49, [7, 13, 18]);
-                await this.updateItemConsistsOf(2, [26, 56]);
-                await this.updateItemConsistsOf(56, [16, 17, 55]);
-                await this.updateItemConsistsOf(55, [5, 11, 54]);
-                await this.updateItemConsistsOf(54, [8, 14, 19]);
-            } catch (error) {
-                console.error('An error occurred:', error);
-            }
+            await this.fillItems();
             /* //P1
             const item26 = await this.itemRepository.findOne({ where: { itemNumber: Number(26) } });
             const item51 = await this.itemRepository.findOne({ where: { itemNumber: Number(51) } });
@@ -145,207 +118,16 @@ export class DbPopulateService {
         } else {
             console.log('Items are already written in DB');
         }
+
         console.log('ItemPopulateEnded');
         console.log('ProuctionProcessStart');
+
         if ((await this.productionProcessRepository.count()) === 0) {
-            //Stammdaten Enität ProductionProcesses
-            const productionProcesses = [
-                //P1/finalProduct
-                [
-                    //E13/1/productionStep
-                    [
-                        [13, 9, 3, 15],
-                        [13, 7, 2, 20],
-                        [13, 8, 1, 15],
-                        [13, 12, 3, 0],
-                        [13, 13, 2, 0],
-                    ],
-                    //E18/2/productionStep
-                    [
-                        [18, 9, 2, 15],
-                        [18, 7, 2, 20],
-                        [18, 8, 3, 20],
-                        [18, 6, 3, 15],
-                    ],
-                    //E7/3/productionStep
-                    [
-                        [7, 11, 3, 20],
-                        [7, 10, 4, 20],
-                    ],
-                    //E4/4
-                    [
-                        [4, 11, 3, 10],
-                        [4, 10, 4, 20],
-                    ],
-                    //E10/5
-                    [
-                        [10, 9, 3, 15],
-                        [10, 7, 2, 20],
-                        [10, 8, 1, 15],
-                        [10, 12, 3, 0],
-                        [10, 13, 2, 0],
-                    ],
-                    //E49/6
-                    [[49, 1, 6, 20]],
-                    //E17/7
-                    [[17, 15, 3, 15]],
-                    //E16/8
-                    [
-                        [16, 14, 3, 0],
-                        [16, 6, 2, 15],
-                    ],
-                    //E50/9
-                    [[50, 2, 5, 30]],
-                    //E51/10
-                    [[51, 3, 5, 20]],
-                    //E26/11
-                    [
-                        [26, 15, 3, 15],
-                        [26, 7, 2, 30],
-                    ],
-                    //P1/12
-                    [[1, 4, 6, 30]],
-                ],
-                //productionProcessesP2
-                [
-                    //E14/1
-                    [
-                        [14, 9, 3, 15],
-                        [14, 7, 2, 20],
-                        [14, 8, 2, 15],
-                        [14, 12, 3, 0],
-                        [14, 13, 2, 0],
-                    ],
-                    //E19/2
-                    [
-                        [19, 9, 2, 20],
-                        [19, 7, 2, 20],
-                        [19, 8, 3, 25],
-                        [19, 6, 3, 15],
-                    ],
-                    //E8/3
-                    [
-                        [8, 11, 3, 20],
-                        [8, 10, 4, 20],
-                    ],
-                    //E54/4
-                    [[54, 1, 6, 20]],
-                    //E55/5
-                    [
-                        [5, 11, 3, 10],
-                        [5, 10, 4, 20],
-                    ],
-                    //E11/6
-                    [
-                        [11, 9, 3, 15],
-                        [11, 7, 2, 20],
-                        [11, 8, 2, 15],
-                        [11, 12, 3, 0],
-                        [11, 13, 2, 0],
-                    ],
-                    //E17/7
-                    //DUPLICATE
-                    //E16/8
-                    //DUPLICATE
-                    //E55/9
-                    [[55, 2, 5, 30]],
-                    //E56/10
-                    [[56, 3, 6, 20]],
-                    //E26/11
-                    //DUPLICATE
-                    //P2/12
-                    [[2, 4, 7, 20]],
-                ],
-                //productionProcessesP3
-                [
-                    //E15/1/productionStep
-                    [
-                        [15, 9, 3, 15],
-                        [15, 7, 2, 20],
-                        [15, 8, 2, 15],
-                        [15, 12, 3, 0],
-                        [15, 13, 2, 0],
-                    ],
-                    //E20/2/productionStep
-                    [
-                        [20, 9, 2, 15],
-                        [20, 7, 2, 20],
-                        [20, 8, 3, 20],
-                        [20, 6, 3, 15],
-                    ],
-                    //E9/3/productionStep
-                    [
-                        [9, 11, 3, 20],
-                        [9, 10, 4, 20],
-                    ],
-                    //E29/4/productionStep
-                    [[29, 1, 6, 20]],
-                    //E6/5/productionStep
-                    [
-                        [6, 11, 3, 20],
-                        [6, 10, 4, 20],
-                    ],
-                    //E12/6/productionStep
-                    [
-                        [12, 9, 3, 15],
-                        [12, 7, 2, 20],
-                        [12, 8, 2, 15],
-                        [12, 12, 3, 0],
-                        [12, 13, 2, 0],
-                    ],
-                    //E17/7/productionStep
-                    //DUPLICATE
-                    //E16/8/productionStep
-                    //DUPLICATE
-                    //E30/9/productionStep
-                    [[30, 2, 5, 20]],
-                    //E31/10/productionStep
-                    [[31, 3, 6, 20]],
-                    //E26/11/productionStep
-                    //DUPLICATE
-                    //P3/12/productionStep
-                    [[3, 4, 7, 30]],
-                ],
-            ];
-            for (const finalProduct of productionProcesses) {
-                for (const productionStep of finalProduct) {
-                    let length = productionStep.length;
-                    let processBefore: ProductionProcess;
-                    for (let i = length - 1; i > -1; i--) {
-                        if (i === length - 1) {
-                            const firstProcess = new ProductionProcess({
-                                item: await this.itemRepository.findOne({
-                                    where: { itemNumber: productionStep[i][0] },
-                                }),
-                                workingStation: await this.workingStationRepository.findOne({
-                                    where: { number: productionStep[i][1] },
-                                }),
-                                processingTime: productionStep[i][2],
-                                setupTime: productionStep[i][3],
-                            });
-                            const savedProcess = await this.productionProcessRepository.manager.save(firstProcess);
-                            processBefore = savedProcess;
-                        } else {
-                            const iProcess = new ProductionProcess({
-                                item: await this.itemRepository.findOne({
-                                    where: { itemNumber: productionStep[i][0] },
-                                }),
-                                workingStation: await this.workingStationRepository.findOne({
-                                    where: { number: productionStep[i][1] },
-                                }),
-                                processingTime: productionStep[i][2],
-                                setupTime: productionStep[i][3],
-                                parent: processBefore,
-                            });
-                            const savedProcess = await this.productionProcessRepository.manager.save(iProcess);
-                            processBefore = savedProcess;
-                        }
-                    }
-                }
-            }
+            await this.fillProductionProcess();
         } else {
             console.log('Production processes are already written in DB');
         }
+
         console.log('populate ProuctionProcess Ended');
         /*         console.log(
             await this.productionProcessRepository.manager.getTreeRepository(ProductionProcess).findDescendants(
@@ -354,6 +136,7 @@ export class DbPopulateService {
                 }),
             ),
         );*/
+
         const testItemArray = [1, 51, 50, 49, 2, 56, 55, 54];
         for (const item of testItemArray) {
             console.log(
@@ -363,6 +146,237 @@ export class DbPopulateService {
                     }),
                 ),
             );
+        }
+    }
+
+    public async fillItems() {
+        const itemNumbers = [
+            1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29,
+            30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56,
+            57, 58, 59,
+        ];
+        for (const itemNumber of itemNumbers) {
+            await this.itemRepository.save(
+                new Item({
+                    itemNumber: itemNumber,
+                    safetyStock: 0,
+                    warehouseStock: 0,
+                    waitingQueue: 0,
+                    workInProgress: 0,
+                    productionOrder: 0,
+                    isMultiple: false,
+                }),
+            );
+        }
+        try {
+            await this.updateItemConsistsOf(1, [26, 51]);
+            await this.updateItemConsistsOf(51, [16, 17, 50]);
+            await this.updateItemConsistsOf(50, [4, 10, 49]);
+            await this.updateItemConsistsOf(49, [7, 13, 18]);
+            await this.updateItemConsistsOf(2, [26, 56]);
+            await this.updateItemConsistsOf(56, [16, 17, 55]);
+            await this.updateItemConsistsOf(55, [5, 11, 54]);
+            await this.updateItemConsistsOf(54, [8, 14, 19]);
+        } catch (error) {
+            console.error('An error occurred:', error);
+        }
+    }
+
+    public async fillProductionProcess() {
+        //Stammdaten Enität ProductionProcesses
+        const productionProcesses = [
+            //P1/finalProduct
+            [
+                //E13/1/productionStep
+                [
+                    [13, 9, 3, 15],
+                    [13, 7, 2, 20],
+                    [13, 8, 1, 15],
+                    [13, 12, 3, 0],
+                    [13, 13, 2, 0],
+                ],
+                //E18/2/productionStep
+                [
+                    [18, 9, 2, 15],
+                    [18, 7, 2, 20],
+                    [18, 8, 3, 20],
+                    [18, 6, 3, 15],
+                ],
+                //E7/3/productionStep
+                [
+                    [7, 11, 3, 20],
+                    [7, 10, 4, 20],
+                ],
+                //E4/4
+                [
+                    [4, 11, 3, 10],
+                    [4, 10, 4, 20],
+                ],
+                //E10/5
+                [
+                    [10, 9, 3, 15],
+                    [10, 7, 2, 20],
+                    [10, 8, 1, 15],
+                    [10, 12, 3, 0],
+                    [10, 13, 2, 0],
+                ],
+                //E49/6
+                [[49, 1, 6, 20]],
+                //E17/7
+                [[17, 15, 3, 15]],
+                //E16/8
+                [
+                    [16, 14, 3, 0],
+                    [16, 6, 2, 15],
+                ],
+                //E50/9
+                [[50, 2, 5, 30]],
+                //E51/10
+                [[51, 3, 5, 20]],
+                //E26/11
+                [
+                    [26, 15, 3, 15],
+                    [26, 7, 2, 30],
+                ],
+                //P1/12
+                [[1, 4, 6, 30]],
+            ],
+            //productionProcessesP2
+            [
+                //E14/1
+                [
+                    [14, 9, 3, 15],
+                    [14, 7, 2, 20],
+                    [14, 8, 2, 15],
+                    [14, 12, 3, 0],
+                    [14, 13, 2, 0],
+                ],
+                //E19/2
+                [
+                    [19, 9, 2, 20],
+                    [19, 7, 2, 20],
+                    [19, 8, 3, 25],
+                    [19, 6, 3, 15],
+                ],
+                //E8/3
+                [
+                    [8, 11, 3, 20],
+                    [8, 10, 4, 20],
+                ],
+                //E54/4
+                [[54, 1, 6, 20]],
+                //E55/5
+                [
+                    [5, 11, 3, 10],
+                    [5, 10, 4, 20],
+                ],
+                //E11/6
+                [
+                    [11, 9, 3, 15],
+                    [11, 7, 2, 20],
+                    [11, 8, 2, 15],
+                    [11, 12, 3, 0],
+                    [11, 13, 2, 0],
+                ],
+                //E17/7
+                //DUPLICATE
+                //E16/8
+                //DUPLICATE
+                //E55/9
+                [[55, 2, 5, 30]],
+                //E56/10
+                [[56, 3, 6, 20]],
+                //E26/11
+                //DUPLICATE
+                //P2/12
+                [[2, 4, 7, 20]],
+            ],
+            //productionProcessesP3
+            [
+                //E15/1/productionStep
+                [
+                    [15, 9, 3, 15],
+                    [15, 7, 2, 20],
+                    [15, 8, 2, 15],
+                    [15, 12, 3, 0],
+                    [15, 13, 2, 0],
+                ],
+                //E20/2/productionStep
+                [
+                    [20, 9, 2, 15],
+                    [20, 7, 2, 20],
+                    [20, 8, 3, 20],
+                    [20, 6, 3, 15],
+                ],
+                //E9/3/productionStep
+                [
+                    [9, 11, 3, 20],
+                    [9, 10, 4, 20],
+                ],
+                //E29/4/productionStep
+                [[29, 1, 6, 20]],
+                //E6/5/productionStep
+                [
+                    [6, 11, 3, 20],
+                    [6, 10, 4, 20],
+                ],
+                //E12/6/productionStep
+                [
+                    [12, 9, 3, 15],
+                    [12, 7, 2, 20],
+                    [12, 8, 2, 15],
+                    [12, 12, 3, 0],
+                    [12, 13, 2, 0],
+                ],
+                //E17/7/productionStep
+                //DUPLICATE
+                //E16/8/productionStep
+                //DUPLICATE
+                //E30/9/productionStep
+                [[30, 2, 5, 20]],
+                //E31/10/productionStep
+                [[31, 3, 6, 20]],
+                //E26/11/productionStep
+                //DUPLICATE
+                //P3/12/productionStep
+                [[3, 4, 7, 30]],
+            ],
+        ];
+        for (const finalProduct of productionProcesses) {
+            for (const productionStep of finalProduct) {
+                let length = productionStep.length;
+                let processBefore: ProductionProcess;
+                for (let i = length - 1; i > -1; i--) {
+                    if (i === length - 1) {
+                        const firstProcess = new ProductionProcess({
+                            item: await this.itemRepository.findOne({
+                                where: { itemNumber: productionStep[i][0] },
+                            }),
+                            workingStation: await this.workingStationRepository.findOne({
+                                where: { number: productionStep[i][1] },
+                            }),
+                            processingTime: productionStep[i][2],
+                            setupTime: productionStep[i][3],
+                        });
+                        const savedProcess = await this.productionProcessRepository.manager.save(firstProcess);
+                        processBefore = savedProcess;
+                    } else {
+                        const iProcess = new ProductionProcess({
+                            item: await this.itemRepository.findOne({
+                                where: { itemNumber: productionStep[i][0] },
+                            }),
+                            workingStation: await this.workingStationRepository.findOne({
+                                where: { number: productionStep[i][1] },
+                            }),
+                            processingTime: productionStep[i][2],
+                            setupTime: productionStep[i][3],
+                            parent: processBefore,
+                        });
+                        const savedProcess = await this.productionProcessRepository.manager.save(iProcess);
+                        processBefore = savedProcess;
+                    }
+                }
+            }
         }
     }
 }
