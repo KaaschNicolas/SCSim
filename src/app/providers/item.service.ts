@@ -102,6 +102,7 @@ export class ItemService {
     }
 
     private async resolveChildren(item: Item, parentProdctionOrder: number) {
+        //TODO NK:Treerepository mit eigener Lösung ersetzen
         let waitingListAmount = await this.waitingListService.getWaitingListAmountByItemId(item.itemNumber);
 
         let workInProgress = await this.waitingListService.getWorkInProgressByItemId(item.itemNumber);
