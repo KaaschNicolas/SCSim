@@ -1,10 +1,10 @@
-import { Entity, Column, PrimaryColumn, ManyToOne } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
 import { Item } from './item.entity';
 import { PurchasedItem } from './purchasedItem.entity';
 
 @Entity()
 export class ItemPurchasedItem {
-    @PrimaryColumn()
+    @PrimaryGeneratedColumn()
     public id: number;
 
     @ManyToOne(() => Item, (item) => item.itemPurchasedItems)
@@ -15,4 +15,8 @@ export class ItemPurchasedItem {
 
     @Column()
     public multiplier: number;
+
+    constructor(itemPurchasedItem: Partial<ItemPurchasedItem>) {
+        Object.assign(this, itemPurchasedItem);
+    }
 }
