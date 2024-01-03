@@ -21,8 +21,63 @@ export class ItemService {
     public async upsertItems(itemContainerDto: ItemContainerDto) {
         this.logger.log('Upserting Items');
         itemContainerDto.itemList.forEach(async (it) => {
-            let item = new Item(it);
-            await this.entityManager.save(item);
+            switch (it.itemNumber) {
+                case 26:
+                    await this.itemRepository.save({
+                        itemNumber: 261,
+                        safetyStock: it.safetyStock / 3,
+                        warehouseStock: it.warehouseStock / 3,
+                    });
+                    await this.itemRepository.save({
+                        itemNumber: 262,
+                        safetyStock: it.safetyStock / 3,
+                        warehouseStock: it.warehouseStock / 3,
+                    });
+                    await this.itemRepository.save({
+                        itemNumber: 263,
+                        safetyStock: it.safetyStock / 3,
+                        warehouseStock: it.warehouseStock / 3,
+                    });
+                    break;
+                case 16:
+                    await this.itemRepository.save({
+                        itemNumber: 161,
+                        safetyStock: it.safetyStock / 3,
+                        warehouseStock: it.warehouseStock / 3,
+                    });
+                    await this.itemRepository.save({
+                        itemNumber: 162,
+                        safetyStock: it.safetyStock / 3,
+                        warehouseStock: it.warehouseStock / 3,
+                    });
+                    await this.itemRepository.save({
+                        itemNumber: 163,
+                        safetyStock: it.safetyStock / 3,
+                        warehouseStock: it.warehouseStock / 3,
+                    });
+                    break;
+                case 17:
+                    await this.itemRepository.save({
+                        itemNumber: 171,
+                        safetyStock: it.safetyStock / 3,
+                        warehouseStock: it.warehouseStock / 3,
+                    });
+                    await this.itemRepository.save({
+                        itemNumber: 172,
+                        safetyStock: it.safetyStock / 3,
+                        warehouseStock: it.warehouseStock / 3,
+                    });
+                    await this.itemRepository.save({
+                        itemNumber: 173,
+                        safetyStock: it.safetyStock / 3,
+                        warehouseStock: it.warehouseStock / 3,
+                    });
+                    break;
+                default:
+                    let item = new Item(it);
+                    await this.entityManager.save(item);
+                    break;
+            }
         });
     }
 
@@ -51,13 +106,8 @@ export class ItemService {
 
         let workInProgress = await this.waitingListService.getWorkInProgressByItemId(item.itemNumber);
 
-        if (item.isMultiple) {
-            item.productionOrder = parentProdctionOrder;
-            item.productionOrder += item.safetyStock - item.warehouseStock / 3 - waitingListAmount - workInProgress;
-        } else {
-            item.productionOrder = parentProdctionOrder;
-            item.productionOrder += item.safetyStock - item.warehouseStock - waitingListAmount - workInProgress;
-        }
+        item.productionOrder = parentProdctionOrder;
+        item.productionOrder += item.safetyStock - item.warehouseStock - waitingListAmount - workInProgress;
 
         item.waitingQueue = waitingListAmount;
         item.workInProgress = workInProgress;

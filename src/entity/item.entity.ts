@@ -15,7 +15,6 @@ import { ProductionProcess } from './productionProcess.entity';
 import { ItemPurchasedItem } from './itemPurchasedItem.entity';
 
 @Entity()
-@Tree('materialized-path')
 export class Item {
     @PrimaryColumn()
     public itemNumber: number;
@@ -27,10 +26,10 @@ export class Item {
     public warehouseStock: number;
 
     @Column()
-    public waitingQueue: number;
+    public waitingQueue?: number;
 
     @Column()
-    public workInProgress: number;
+    public workInProgress?: number;
 
     @Column()
     public productionOrder?: number;
@@ -38,10 +37,10 @@ export class Item {
     @Column()
     public isMultiple?: boolean;
 
-    @TreeChildren()
+    @OneToMany(() => Item, (item) => item.parentItem)
     public consistsOf: Item[];
 
-    @TreeParent()
+    @ManyToOne(() => Item, (item) => item.consistsOf)
     public parentItem: Item;
 
     @OneToMany(() => ProductionProcess, (productionProcess) => productionProcess.item)
