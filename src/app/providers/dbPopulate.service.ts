@@ -1,7 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Item } from 'src/entity/item.entity';
+import { ItemPurchasedItem } from 'src/entity/itemPurchasedItem.entity';
 import { ProductionProcess } from 'src/entity/productionProcess.entity';
+import { PurchasedItem } from 'src/entity/purchasedItem.entity';
 import { WorkingStation } from 'src/entity/workingStation.entity';
 import { Repository, EntityManager } from 'typeorm';
 
@@ -14,6 +16,10 @@ export class DbPopulateService {
         private readonly productionProcessRepository: Repository<ProductionProcess>,
         @InjectRepository(Item)
         private readonly itemRepository: Repository<Item>,
+        @InjectRepository(PurchasedItem)
+        private readonly purchasedItemRepository: Repository<PurchasedItem>,
+        @InjectRepository(ItemPurchasedItem)
+        private readonly itemPurchasedItemRepository: Repository<ItemPurchasedItem>,
         private readonly entityManager: EntityManager,
     ) {}
 
@@ -136,8 +142,23 @@ export class DbPopulateService {
                 }),
             ),
         );*/
+        console.log('PurchasedItemStart');
+        if((await this.purchasedItemRepository.count()) === 0) {
+            await this.fillPurchasedItem();
+        }else {
+            console.log('Purchased Items are already written in DB');
+        }
+        console.log('PurchasedItemEnded');
+        console.log('ItemPurchasedItemStart');
+        if((await this.itemPurchasedItemRepository.count()) === 0) {
+            await this.fillItemPurchasedItem();
+        }else {
+            console.log('ItemPurchasedItems are already written in DB');
+        }
+        console.log('ItemPurchasedItemEnded');
 
-        const testItemArray = [1, 51, 50, 49, 2, 56, 55, 54];
+
+/*         const testItemArray = [1, 51, 50, 49, 2, 56, 55, 54];
         for (const item of testItemArray) {
             console.log(
                 await this.entityManager.getTreeRepository(Item).findDescendantsTree(
@@ -146,14 +167,13 @@ export class DbPopulateService {
                     }),
                 ),
             );
-        }
+        } */
     }
 
     public async fillItems() {
         const itemNumbers = [
-            1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29,
-            30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56,
-            57, 58, 59,
+            1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 161, 162, 163, 171, 172, 173, 18, 19, 20, 261, 262, 263, 29,
+            30, 31, 49, 50, 51, 54, 55, 56
         ];
         for (const itemNumber of itemNumbers) {
             await this.itemRepository.save(
@@ -169,14 +189,19 @@ export class DbPopulateService {
             );
         }
         try {
-            await this.updateItemConsistsOf(1, [26, 51]);
-            await this.updateItemConsistsOf(51, [16, 17, 50]);
+            await this.updateItemConsistsOf(1, [261, 51]);
+            await this.updateItemConsistsOf(51, [161, 171, 50]);
             await this.updateItemConsistsOf(50, [4, 10, 49]);
             await this.updateItemConsistsOf(49, [7, 13, 18]);
-            await this.updateItemConsistsOf(2, [26, 56]);
-            await this.updateItemConsistsOf(56, [16, 17, 55]);
+            await this.updateItemConsistsOf(2, [262, 56]);
+            await this.updateItemConsistsOf(56, [162, 172, 55]);
             await this.updateItemConsistsOf(55, [5, 11, 54]);
             await this.updateItemConsistsOf(54, [8, 14, 19]);
+            await this.updateItemConsistsOf(3, [263, 31]);
+            await this.updateItemConsistsOf(31, [163, 173, 30]);
+            await this.updateItemConsistsOf(30, [6, 12, 29]);
+            await this.updateItemConsistsOf(29, [9, 15, 20]);
+
         } catch (error) {
             console.error('An error occurred:', error);
         }
@@ -375,6 +400,77 @@ export class DbPopulateService {
                         const savedProcess = await this.productionProcessRepository.manager.save(iProcess);
                         processBefore = savedProcess;
                     }
+                }
+            }
+        }
+    }
+    public async fillPurchasedItem() {
+        const purchasedItemNumbers = [
+            21, 22, 23, 24, 25, 27, 28, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 52, 53, 57, 58, 59,
+        ];
+        for (const purchasedItem of purchasedItemNumbers) {
+            await this.purchasedItemRepository.save(
+                new PurchasedItem({
+                    number: purchasedItem,
+                    ordertype: 0,
+                    costs: 0,
+                    warehouseStock: 0,
+                    calculatedPurchase: 0,
+                    itemPurchasedItems: [],
+                })
+            );
+        }
+    }
+    public async fillItemPurchasedItem() {
+        const purchasedItemNumbers = [
+            21, 22, 23, 24, 25, 27, 28, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 52, 53, 57, 58, 59,
+        ];
+        const purchasedItemMapping = [
+            [1,0,0],
+            [0,1,0],
+            [0,0,1],
+            [7,7,7],
+            [4,4,4],
+            [2,2,2],
+            [4,5,6],
+            [3,3,3],
+            [0,0,2],
+            [0,0,72],
+            [4,4,4],
+            [1,1,1],
+            [1,1,1],
+            [1,1,1],
+            [2,2,2],
+            [1,1,1],
+            [1,1,1],
+            [2,2,2],
+            [1,1,1],
+            [3,3,3],
+            [1,1,1],
+            [1,1,1],
+            [1,1,1],
+            [2,2,2],
+            [2,0,0],
+            [72,0,0],
+            [0,2,0],
+            [0,72,0],
+            [2,2,2],       
+        ]
+        const ps = [
+            await this.itemRepository.findOneBy({ itemNumber: 1 }),
+            await this.itemRepository.findOneBy({ itemNumber: 2 }),
+            await this.itemRepository.findOneBy({ itemNumber: 3 })
+        ]
+        for (let i = 0; i < purchasedItemMapping.length; i++) {
+            for (let j = 0; j < 3; j++) {
+                if (purchasedItemMapping[i][j]!== 0) {
+                    await this.itemPurchasedItemRepository.save(
+                        new ItemPurchasedItem({
+                            item: ps[j],
+                            purchasedItem: await this.purchasedItemRepository.findOneBy({ number: purchasedItemNumbers[i] }),
+                            multiplier: purchasedItemMapping[i][j],
+                        })
+                    );
                 }
             }
         }
