@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Item } from 'src/entity/item.entity';
 import { ItemContainerDto } from '../dto/itemContainer.dto';
 import { WaitingListService } from './waitingList.service';
+import { ItemDto } from '../dto/item.dto';
 
 @Injectable()
 export class ItemService {
@@ -81,18 +82,89 @@ export class ItemService {
         });
     }
 
+    public async getAll() {
+        let items = await this.itemRepository.find();
+        let itemContainerDto: ItemContainerDto = new ItemContainerDto();
+        itemContainerDto.itemList = new Array<ItemDto>();
+        items.forEach((item) => {
+            switch (item.itemNumber) {
+                case 261:
+                    this.convertMultipleToSingle(item, itemContainerDto, 26);
+                    break;
+                case 262:
+                    this.convertMultipleToSingle(item, itemContainerDto, 26);
+                    break;
+                case 263:
+                    this.convertMultipleToSingle(item, itemContainerDto, 26);
+                    break;
+                case 161:
+                    this.convertMultipleToSingle(item, itemContainerDto, 16);
+                    break;
+                case 162:
+                    this.convertMultipleToSingle(item, itemContainerDto, 16);
+                    break;
+                case 163:
+                    this.convertMultipleToSingle(item, itemContainerDto, 16);
+                    break;
+                case 171:
+                    this.convertMultipleToSingle(item, itemContainerDto, 17);
+                    break;
+                case 172:
+                    this.convertMultipleToSingle(item, itemContainerDto, 17);
+                    break;
+                case 173:
+                    this.convertMultipleToSingle(item, itemContainerDto, 17);
+                    break;
+                default:
+                    itemContainerDto.itemList?.push(
+                        new ItemDto(
+                            item.itemNumber,
+                            item.safetyStock,
+                            item.warehouseStock,
+                            item.productionOrder,
+                            item.waitingQueue,
+                            item.workInProgress,
+                        ),
+                    );
+                    break;
+            }
+        });
+        return itemContainerDto;
+    }
+
+    private convertMultipleToSingle(item: Item, itemContainer: ItemContainerDto, itemNumber: number) {
+        let itemDto = itemContainer.itemList.find((it) => it.itemNumber === itemNumber);
+        if (itemDto !== null && itemDto !== undefined) {
+            itemDto.productionOrder = itemDto.productionOrder + item.productionOrder;
+        } else {
+            itemContainer.itemList.push(
+                new ItemDto(
+                    itemNumber,
+                    item.safetyStock,
+                    item.warehouseStock,
+                    item.productionOrder,
+                    item.waitingQueue,
+                    item.workInProgress,
+                ),
+            );
+        }
+    }
+
     public async findById(itemNumber: number) {
         return await this.itemRepository.findOneBy({ itemNumber: itemNumber });
     }
 
-    public async findAll() {
+    public async triggerCalculateBom() {
+        this.logger.log('findAll');
         await this.resolveBom();
-        return await this.itemRepository.find();
+        return await this.getAll();
     }
 
     private async resolveBom() {
+        this.logger.log('resolveBom');
         let products = await this.itemRepository.find({
             where: [{ itemNumber: 1 }, { itemNumber: 2 }, { itemNumber: 3 }],
+            relations: { consistsOf: true },
         });
 
         //productionOrder for p1, p2, p3 must be prefilled (forecast)
@@ -102,26 +174,51 @@ export class ItemService {
     }
 
     private async resolveChildren(item: Item, parentProdctionOrder: number) {
+        console.log('resolveChildren');
         let waitingListAmount = await this.waitingListService.getWaitingListAmountByItemId(item.itemNumber);
 
         let workInProgress = await this.waitingListService.getWorkInProgressByItemId(item.itemNumber);
+        //console.log(waitingListAmount);
+        //console.log(workInProgress);
 
         item.productionOrder = parentProdctionOrder;
         item.productionOrder += item.safetyStock - item.warehouseStock - waitingListAmount - workInProgress;
 
-        item.waitingQueue = waitingListAmount;
-        item.workInProgress = workInProgress;
+        console.log(`calculated productionOrder  ${item.productionOrder}`);
+
+        if (waitingListAmount !== null || workInProgress !== null) {
+            item.waitingQueue = waitingListAmount;
+            item.workInProgress = workInProgress;
+        }
 
         await this.entityManager.save(item);
 
+        console.log(item.consistsOf);
         let childreen = item.consistsOf;
 
+        for (var i in childreen) {
+            if (i === null || i === undefined) {
+                return;
+            }
+            let child = await this.itemRepository.find({
+                relations: { consistsOf: true },
+                where: { itemNumber: childreen[i].itemNumber },
+            });
+            console.log(`child: ${child}`);
+            if (child === null || child === undefined) {
+                return;
+            }
+            await this.resolveChildren(child[0], item.productionOrder);
+        }
+
+        /*
         childreen.forEach(async (child) => {
-            if (child === null) {
+            if (child === null || child === undefined) {
                 return;
             }
 
             await this.resolveChildren(child, item.productionOrder);
         });
+        */
     }
 }

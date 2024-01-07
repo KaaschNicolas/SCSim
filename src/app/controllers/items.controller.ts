@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Logger, Param, Post } from '@nestjs/common';
 import { ItemService } from '../providers/item.service';
 import { ItemContainerDto } from '../dto/itemContainer.dto';
 
@@ -11,9 +11,14 @@ export class ItemController {
         return this.itemService.upsertItems(itemContainerDto);
     }
 
-    @Get('/getCalculatedBom')
+    @Get('getCalculatedBom')
+    triggerCalculateBom() {
+        return this.itemService.triggerCalculateBom();
+    }
+
+    @Get()
     findAll() {
-        return this.itemService.findAll();
+        return this.itemService.getAll();
     }
 
     @Get(':id')
