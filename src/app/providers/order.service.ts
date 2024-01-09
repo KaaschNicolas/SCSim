@@ -76,7 +76,7 @@ export class OrderService {
         return {
             article: purchasedItem.number,
             quantity: purchasedItem.calculatedPurchase,
-            //TODO hier noch Auflösung in Modi
+            //TODO NK:hier noch Auflösung in Modi
             modus: '4',
         };
     }
