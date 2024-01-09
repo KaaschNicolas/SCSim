@@ -124,6 +124,10 @@ export class CapacityService {
                 );
             });
         });
+        capacityContainer.workingStationCapacities.forEach(capacity => {
+            capacity.calculateTotalCapacity();
+            capacity.calculateTotalShiftsAndOvertime();
+        });
         return capacityContainer;
     }
 }
