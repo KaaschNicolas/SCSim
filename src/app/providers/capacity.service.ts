@@ -41,8 +41,9 @@ export class CapacityService {
         items.forEach(async (item) => {
             if (item.productionOrder <= 0) {
             } else {
-                const productionProcesses = await this.productionProcessRepository.findBy({
-                    item: item,
+                const productionProcesses = await this.productionProcessRepository.find({
+                    where: [{item: item}],
+                    relations: { workingStation: true }
                 });
                 //Hier werden die jeweiligen Zeiten für die einzelnen Produktionsaufträge den Arbeitsstationen hinzugefügt
                 productionProcesses.forEach((productionProcess) => {
