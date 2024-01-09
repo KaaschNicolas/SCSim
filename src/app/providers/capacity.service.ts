@@ -43,11 +43,14 @@ export class CapacityService {
             } else {
                 const productionProcesses = await this.productionProcessRepository.find({
                     where: [{item: item}],
-                    relations: { workingStation: true }
+                    relations: { 
+                        workingStation: true,
+                        item: true, 
+                    }
                 });
                 //Hier werden die jeweiligen Zeiten für die einzelnen Produktionsaufträge den Arbeitsstationen hinzugefügt
                 productionProcesses.forEach((productionProcess) => {
-                    capacityContainer[productionProcess.workingStation.number - 1].addCapacityForProductionOrder(
+                    capacityContainer.workingStationCapacities[productionProcess.workingStation.number - 1].addCapacityForProductionOrder(
                         productionProcess.item.itemNumber,
                         item.productionOrder,
                         productionProcess.setupTime,
@@ -66,24 +69,44 @@ export class CapacityService {
             },
         });
         waitingLists.forEach(async (waitingList) => {
-            capacityContainer[waitingList.workingStationId - 1].addCapacityForWaitingList(
+            const item = await this.itemRepository.findOne({
+                where: { itemNumber: waitingList.itemId },
+            });
+            const workingStation = await this.workingStationRepository.findOne({
+                where: { number: waitingList.workingStationId },
+            });
+            const productionProcess = await this.productionProcessRepository.find({
+                select: {
+                    setupTime: true,
+                },
+                where: {
+                    item: item,
+                    workingStation: workingStation,
+                },
+                relations: {
+                    workingStation: true,
+                    item: true,
+                },
+            });
+            console.log("workingstationid von der waitinglist: " + waitingList.workingStationId);
+            console.log("länge des capacityContainer.workingStationCapacities arrays"+ capacityContainer.workingStationCapacities.length);
+            capacityContainer.workingStationCapacities[waitingList.workingStationId - 1].addCapacityForWaitingList(
                 waitingList.itemId,
                 waitingList.amount,
-                await this.productionProcessRepository.find({
-                    select: {
-                        setupTime: true,
-                    },
-                    where: {
-                        item: await this.itemRepository.findOne({
-                            where: { itemNumber: waitingList.itemId },
-                        }),
-                        workingStation: await this.workingStationRepository.findOne({
-                            where: { number: waitingList.workingStationId },
-                        }),
-                    },
-                }),
+                productionProcess[0].setupTime,
                 waitingList.timeNeed,
             );
+        });
+        capacityContainer.workingStationCapacities.forEach(workingStation => {
+            console.log(workingStation.workingStationNumber);
+            console.log(workingStation.capacityProductionOrders);
+            console.log(workingStation.capacityWaitingList);
+            if (workingStation.capacityWaitingList != undefined || workingStation.capacityWaitingList!= null) {
+            workingStation.capacityWaitingList.forEach(waitingLists => {
+                console.log(waitingLists.itemNumber);
+                console.log(waitingLists);
+            });
+        }
         });
         return await this.capacityOrdersInWork(capacityContainer);
     }
@@ -97,7 +120,7 @@ export class CapacityService {
                 },
             })
         ).forEach(async (orderInWork) => {
-            capacityContainer[orderInWork.workingStationId - 1].addCapacityOrdersInWork(
+            capacityContainer.workingStationCapacities[orderInWork.workingStationId - 1].addCapacityOrdersInWork(
                 orderInWork.itemId,
                 orderInWork.amount,
                 0,
@@ -117,7 +140,7 @@ export class CapacityService {
                     }),
                 )
             ).forEach(async (productionProcess) => {
-                capacityContainer[productionProcess.workingStation.number - 1].addCapacityOrdersInWork(
+                capacityContainer.workingStationCapacities[productionProcess.workingStation.number - 1].addCapacityOrdersInWork(
                     productionProcess.item.itemNumber,
                     orderInWork.amount,
                     productionProcess.setupTime,
@@ -125,6 +148,9 @@ export class CapacityService {
                 );
             });
         });
+        /*capacityContainer.workingStationCapacities.forEach(capacity => {
+            console.log(capacity);
+        });*/
         capacityContainer.workingStationCapacities.forEach(capacity => {
             capacity.calculateTotalCapacity();
             capacity.calculateTotalShiftsAndOvertime();
