@@ -9,10 +9,11 @@ import { WaitingList } from "src/entity/waitingList.entity";
 import { PurchasedItem } from "src/entity/purchasedItem.entity";
 import { ItemPurchasedItem } from "src/entity/itemPurchasedItem.entity";
 import { WaitingListModule } from "./waitingList.module";
+import { WaitingListService } from "../providers/waitingList.service";
 
 @Module({
     imports: [DatabaseModule, TypeOrmModule.forFeature([Item, WaitingList, PurchasedItem, ItemPurchasedItem]), WaitingListModule],
     controllers: [OrderController],
-    providers: [OrderService, ItemService],
+    providers: [OrderService, ItemService, WaitingListService],
 })
 export class OrderModule {}
