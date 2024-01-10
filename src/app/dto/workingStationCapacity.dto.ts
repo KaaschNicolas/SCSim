@@ -53,7 +53,6 @@ export class WorkingStationCapacityDto {
             //this.capacityWaitingList = [new CapacityForItemDto(itemNumber, orderAmount, setupTime, processingTime)];
             this.capacityWaitingList = [];
         }
-        console.log(new CapacityForItemDto(itemNumber, orderAmount, setupTime, processingTime));
         this.capacityWaitingList.push(new CapacityForItemDto(itemNumber, orderAmount, setupTime, processingTime));
     }
 
