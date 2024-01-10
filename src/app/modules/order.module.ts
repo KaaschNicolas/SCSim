@@ -10,4 +10,4 @@ import { Module } from "@nestjs/common";
     controllers: [OrderController],
     providers: [OrderService, ItemService],
 })
-export class ItemModule {}
+export class OrderModule {}
