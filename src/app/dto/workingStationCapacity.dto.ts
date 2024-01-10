@@ -20,6 +20,12 @@ export class WorkingStationCapacityDto {
 
     public constructor(workingStationNumber: number) {
         this.workingStationNumber = workingStationNumber;
+        this.totalCapacity=0;
+        this.shifts=0;
+        this.overtime=0;
+        this.capacityProductionOrders = [];
+        this.capacityWaitingList = [];
+        this.capacityOrdersInWork = [];
 
         return this;
     }
@@ -30,10 +36,8 @@ export class WorkingStationCapacityDto {
         setupTime: number,
         processingTime: number,
     ): void {
-        if (this.capacityProductionOrders === null) {
-            this.capacityProductionOrders = [
-                new CapacityForItemDto(itemNumber, orderAmount, setupTime, processingTime),
-            ];
+        if (this.capacityProductionOrders === null || this.capacityProductionOrders === undefined) {
+            this.capacityProductionOrders = [];
         }
         this.capacityProductionOrders.push(new CapacityForItemDto(itemNumber, orderAmount, setupTime, processingTime));
     }
@@ -44,8 +48,10 @@ export class WorkingStationCapacityDto {
         setupTime: number = 0,
         processingTime: number,
     ): void {
-        if (this.capacityWaitingList === null) {
-            this.capacityWaitingList = [new CapacityForItemDto(itemNumber, orderAmount, setupTime, processingTime)];
+        if (this.capacityWaitingList === null || this.capacityWaitingList === undefined) {
+            console.log("if");
+            //this.capacityWaitingList = [new CapacityForItemDto(itemNumber, orderAmount, setupTime, processingTime)];
+            this.capacityWaitingList = [];
         }
         this.capacityWaitingList.push(new CapacityForItemDto(itemNumber, orderAmount, setupTime, processingTime));
     }
@@ -56,33 +62,36 @@ export class WorkingStationCapacityDto {
         setupTime: number = 0,
         processingTime: number,
     ): void {
-        if (this.capacityOrdersInWork === null) {
-            this.capacityOrdersInWork = [new CapacityForItemDto(itemNumber, orderAmount, setupTime, processingTime)];
+        if (this.capacityOrdersInWork === null || this.capacityOrdersInWork === undefined) {
+            this.capacityOrdersInWork = [];
         }
         this.capacityOrdersInWork.push(new CapacityForItemDto(itemNumber, orderAmount, setupTime, processingTime));
     }
 
     calculateTotalCapacity() {
         let sum: number = 0;
-        if (this.capacityProductionOrders !== null) {
-            this.capacityProductionOrders.forEach((capacityProductionOrder) => {
+        if (this.capacityProductionOrders !== null || this.capacityProductionOrders !== undefined) {
+            this.capacityProductionOrders?.forEach((capacityProductionOrder) => {
                 sum += capacityProductionOrder.processingTime + capacityProductionOrder.setupTime;
             });
         }
-        if (this.capacityWaitingList !== null) {
-            this.capacityWaitingList.forEach((capacityWaitingList) => {
+        if (this.capacityWaitingList !== null || this.capacityWaitingList!== undefined) {
+            this.capacityWaitingList?.forEach((capacityWaitingList) => {
                 sum += capacityWaitingList.processingTime + capacityWaitingList.setupTime;
             });
         }
-        if (this.capacityOrdersInWork !== null) {
-            this.capacityOrdersInWork.forEach((capacityOrderInWork) => {
+        if (this.capacityOrdersInWork !== null || this.capacityWaitingList!== undefined) {
+            this.capacityOrdersInWork?.forEach((capacityOrderInWork) => {
                 sum += capacityOrderInWork.processingTime + capacityOrderInWork.setupTime;
             });
         }
+        this.totalCapacity = sum;
     }
 
     calculateTotalShiftsAndOvertime() {
-        if (this.totalCapacity <= 3600) {
+        if (this.totalCapacity == 0){
+            this.shifts = 0;
+        } else if (this.totalCapacity <= 3600) {
             this.shifts = 1;
             if (this.totalCapacity > 2400) {
                 this.overtime = this.totalCapacity - 2400;
@@ -92,11 +101,8 @@ export class WorkingStationCapacityDto {
             if (this.totalCapacity > 4800) {
                 this.overtime = this.totalCapacity - 4800;
             }
-        } else if (this.totalCapacity <= 8400) {
+        } else {
             this.shifts = 3;
-            if (this.totalCapacity > 7200) {
-                this.overtime = this.totalCapacity - 7200;
-            }
         }
     }
 }

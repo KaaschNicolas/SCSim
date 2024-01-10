@@ -133,15 +133,19 @@ export class DbPopulateService {
         } else {
             console.log('Production processes are already written in DB');
         }
+        //productionprocessestest
+        /*let productionProcessesWithChilds = [1, 3, 6, 10, 14, 12, 25, 28, 33, 37, 40, 42, 50, 55, 59, 62, 64]
+        for (const pp of productionProcessesWithChilds) {
+            console.log(pp);
+                console.log(await this.productionProcessRepository.manager.getTreeRepository(ProductionProcess).findDescendants(
+                    await this.productionProcessRepository.findOne({
+                        where: { productionProcessId: pp },
+                    })))
+                    console.log("end");
+        }*/
+            
 
         console.log('populate ProuctionProcess Ended');
-        /*         console.log(
-            await this.productionProcessRepository.manager.getTreeRepository(ProductionProcess).findDescendants(
-                await this.productionProcessRepository.findOne({
-                    where: { productionProcessId: 100 },
-                }),
-            ),
-        );*/
         console.log('PurchasedItemStart');
         if((await this.purchasedItemRepository.count()) === 0) {
             await this.fillPurchasedItem();
@@ -248,11 +252,11 @@ export class DbPopulateService {
                 //E49/6
                 [[49, 1, 6, 20]],
                 //E17/7
-                [[17, 15, 3, 15]],
+                [[171, 15, 3, 15]],
                 //E16/8
                 [
-                    [16, 14, 3, 0],
-                    [16, 6, 2, 15],
+                    [161, 14, 3, 0],
+                    [161, 6, 2, 15],
                 ],
                 //E50/9
                 [[50, 2, 5, 30]],
@@ -260,8 +264,8 @@ export class DbPopulateService {
                 [[51, 3, 5, 20]],
                 //E26/11
                 [
-                    [26, 15, 3, 15],
-                    [26, 7, 2, 30],
+                    [261, 15, 3, 15],
+                    [261, 7, 2, 30],
                 ],
                 //P1/12
                 [[1, 4, 6, 30]],
@@ -304,15 +308,21 @@ export class DbPopulateService {
                     [11, 13, 2, 0],
                 ],
                 //E17/7
-                //DUPLICATE
+                [[172, 15, 3, 15]],
                 //E16/8
-                //DUPLICATE
+                [
+                    [162, 14, 3, 0],
+                    [162, 6, 2, 15],
+                ],
                 //E55/9
                 [[55, 2, 5, 30]],
                 //E56/10
                 [[56, 3, 6, 20]],
                 //E26/11
-                //DUPLICATE
+                [
+                    [262, 15, 3, 15],
+                    [262, 7, 2, 30],
+                ],
                 //P2/12
                 [[2, 4, 7, 20]],
             ],
@@ -354,15 +364,21 @@ export class DbPopulateService {
                     [12, 13, 2, 0],
                 ],
                 //E17/7/productionStep
-                //DUPLICATE
+                [[173, 15, 3, 15]],
                 //E16/8/productionStep
-                //DUPLICATE
+                [
+                    [163, 14, 3, 0],
+                    [163, 6, 2, 15],
+                ],
                 //E30/9/productionStep
                 [[30, 2, 5, 20]],
                 //E31/10/productionStep
                 [[31, 3, 6, 20]],
                 //E26/11/productionStep
-                //DUPLICATE
+                [
+                    [263, 15, 3, 15],
+                    [263, 7, 2, 30],
+                ],
                 //P3/12/productionStep
                 [[3, 4, 7, 30]],
             ],
