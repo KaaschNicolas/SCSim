@@ -30,7 +30,12 @@ export class OrderService {
     }
 
     public async getOrders() {
-        let purchasedItems = await this.itemPurchasedItemRepository.find();
+        let purchasedItems = await this.itemPurchasedItemRepository.find({
+            relations: {
+                purchasedItem: true,
+                item: true,
+            },
+        });
 
         purchasedItems.forEach((it) => {
             this.calculateAmount(it);
@@ -51,6 +56,9 @@ export class OrderService {
         let purchasedItem = await this.purchasedItemRepository.findOne({
             where: {
                 number: itemPurchasedItem.purchasedItem.number,
+            },
+            relations: {
+                itemPurchasedItems: true,
             },
         });
 
