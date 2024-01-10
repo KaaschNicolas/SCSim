@@ -71,7 +71,7 @@ export class WorkingStationCapacityDto {
 
     calculateTotalCapacity() {
         let sum: number = 0;
-        if (this.capacityProductionOrders !== null || this.capacityProductionOrders === undefined) {
+        if (this.capacityProductionOrders !== null || this.capacityProductionOrders !== undefined) {
             this.capacityProductionOrders?.forEach((capacityProductionOrder) => {
                 sum += capacityProductionOrder.processingTime + capacityProductionOrder.setupTime;
             });
@@ -90,7 +90,9 @@ export class WorkingStationCapacityDto {
     }
 
     calculateTotalShiftsAndOvertime() {
-        if (this.totalCapacity <= 3600) {
+        if (this.totalCapacity == 0){
+            this.shifts = 0;
+        } else if (this.totalCapacity <= 3600) {
             this.shifts = 1;
             if (this.totalCapacity > 2400) {
                 this.overtime = this.totalCapacity - 2400;
@@ -100,11 +102,8 @@ export class WorkingStationCapacityDto {
             if (this.totalCapacity > 4800) {
                 this.overtime = this.totalCapacity - 4800;
             }
-        } else if (this.totalCapacity <= 8400) {
+        } else {
             this.shifts = 3;
-            if (this.totalCapacity > 7200) {
-                this.overtime = this.totalCapacity - 7200;
-            }
         }
     }
 }

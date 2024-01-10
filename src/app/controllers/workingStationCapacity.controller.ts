@@ -7,6 +7,9 @@ export class WorkingStationCapacityController {
 
     @Get('')
     async getAll() {
-        return await this.capacityService.create();
+        let res = await this.capacityService.create();
+        let res1 = await this.capacityService.capacityWaitingList(res);
+        let res2 = await this.capacityService.capacityOrdersInWork(res1);
+        return res2;
     }
 }
