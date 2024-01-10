@@ -16,7 +16,7 @@ export class AllInOneService {
     public async provideAllInOne() {
         let allInOne: AllInOneDto = new AllInOneDto();
         
-
+        await this.itemService.triggerCalculateBom();
 
         allInOne.itemList = (await this.itemService.getAll()).itemList;
         
