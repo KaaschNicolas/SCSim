@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { WaitingList } from 'src/entity/waitingList.entity';
 import { Repository, EntityManager } from 'typeorm';
 import { WaitingListContainerDto } from '../dto/waitingListContainer.dto';
+import { WaitingListDto } from '../dto/waitingList.dto';
 
 @Injectable()
 export class WaitingListService {
@@ -16,8 +17,8 @@ export class WaitingListService {
         this.logger = new Logger(WaitingListService.name);
     }
 
-    public async createWaitingList(waitingListDto: WaitingListContainerDto) {
-        waitingListDto.waitingLists.forEach(async (it) => {
+    public async createWaitingList(waitingListDto: WaitingListDto[]) {
+        waitingListDto.forEach(async (it) => {
             let waitingList = new WaitingList(it);
             await this.entityManager.save(waitingList);
         });
