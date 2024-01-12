@@ -1,14 +1,14 @@
 import { Body, Controller, Get, HttpCode, Logger, Param, Post } from '@nestjs/common';
 import { ItemService } from '../providers/item.service';
-import { ItemContainerDto } from '../dto/itemContainer.dto';
+import { ItemDto } from '../dto/item.dto';
 
 @Controller('items')
 export class ItemController {
     constructor(private readonly itemService: ItemService) {}
 
     @Post('/upsertItems')
-    upsert(@Body() itemContainerDto: ItemContainerDto) {
-        return this.itemService.upsertItems(itemContainerDto);
+    upsert(@Body() itemDtoList: ItemDto[]) {
+        return this.itemService.upsertItems(itemDtoList);
     }
 
     @Get('getCalculatedBom')

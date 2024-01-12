@@ -7,10 +7,10 @@ import { ItemModule } from './app/modules/item.module';
 import { CapacityModule } from './app/modules/capacity.module';
 import { DbPopulateService } from './app/providers/dbPopulate.service';
 import { DbPopulateModule } from './app/modules/dbPopulate.module';
+import { OrderModule } from './app/modules/order.module';
+import { AllInOneModule } from './app/modules/allInOne.module';
 
 @Module({
-    imports: [ConfigModule.forRoot({ isGlobal: true }), DatabaseModule, ItemModule, CapacityModule, DbPopulateModule],
-    controllers: [AppController],
-    providers: [AppService],
+    imports: [ConfigModule.forRoot({ isGlobal: true }), DatabaseModule, ItemModule, CapacityModule, DbPopulateModule, OrderModule, AllInOneModule],
 })
 export class AppModule {}
