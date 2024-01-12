@@ -185,8 +185,11 @@ export class ItemService {
 
         console.log(`calculated productionOrder  ${item.productionOrder}`);
 
-        if (waitingListAmount !== null || workInProgress !== null) {
+        if (waitingListAmount !== null) {
             item.waitingQueue = waitingListAmount;
+        }
+
+        if (workInProgress !== null) {
             item.workInProgress = workInProgress;
         }
 
