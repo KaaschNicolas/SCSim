@@ -6,9 +6,10 @@ import 'reflect-metadata';
 async function bootstrap() {
     const app = await NestFactory.create(AppModule, {
         logger: ['error', 'warn', 'debug', 'log'],
+        cors: true,
     });
     await app.listen(3000);
-    app.enableCors()
+    app.enableCors();
     const dbPopulateService = app.get(DbPopulateService);
     await dbPopulateService.populate();
     console.log('It works');
