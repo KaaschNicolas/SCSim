@@ -175,7 +175,6 @@ export class ItemService {
     private async resolveChildren(item: Item, parentProdctionOrder: number) {
         if (item.itemNumber === 1 || item.itemNumber === 2 || item.itemNumber === 3) {
             let childreen = item.consistsOf;
-
             for (var i in childreen) {
                 if (i === null || i === undefined) {
                     return;
@@ -191,6 +190,7 @@ export class ItemService {
                 await this.resolveChildren(child[0], item.productionOrder);
             }
         } else {
+            //TODO checken, ob workInProgress und waitingList richtig verrechnet werden
             let waitingListAmount = await this.waitingListService.getWaitingListAmountByItemId(item.itemNumber);
 
             let workInProgress = await this.waitingListService.getWorkInProgressByItemId(item.itemNumber);
