@@ -131,11 +131,11 @@ export class DbPopulateService {
         console.log('ItemPopulateEnded');
         console.log('ProuctionProcessStart');
 
-        //if ((await this.productionProcessRepository.count()) === 0) {
-        await this.fillProductionProcess();
-        //} else {
-        //console.log('Production processes are already written in DB');
-        //}
+        if ((await this.productionProcessRepository.count()) === 0) {
+            await this.fillProductionProcess();
+        } else {
+            console.log('Production processes are already written in DB');
+        }
         //productionprocessestest
         /*let productionProcessesWithChilds = [1, 3, 6, 10, 14, 12, 25, 28, 33, 37, 40, 42, 50, 55, 59, 62, 64]
         for (const pp of productionProcessesWithChilds) {

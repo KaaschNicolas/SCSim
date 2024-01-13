@@ -18,6 +18,7 @@ export class WaitingListService {
     }
 
     public async createWaitingList(waitingListDto: WaitingListDto[]) {
+        //TODO itemNumber auflösen in 261, 262, 263
         waitingListDto.forEach(async (it) => {
             let waitingList = new WaitingList(it);
             await this.entityManager.save(waitingList);
