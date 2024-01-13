@@ -4,6 +4,7 @@ import { Item } from 'src/entity/item.entity';
 import { ItemPurchasedItem } from 'src/entity/itemPurchasedItem.entity';
 import { ProductionProcess } from 'src/entity/productionProcess.entity';
 import { PurchasedItem } from 'src/entity/purchasedItem.entity';
+import { WaitingList } from 'src/entity/waitingList.entity';
 import { WorkingStation } from 'src/entity/workingStation.entity';
 import { Repository, EntityManager } from 'typeorm';
 
@@ -20,6 +21,8 @@ export class DbPopulateService {
         private readonly purchasedItemRepository: Repository<PurchasedItem>,
         @InjectRepository(ItemPurchasedItem)
         private readonly itemPurchasedItemRepository: Repository<ItemPurchasedItem>,
+        @InjectRepository(WaitingList)
+        private readonly waitingListRepository: Repository<WaitingList>,
         private readonly entityManager: EntityManager,
     ) {}
 
@@ -40,23 +43,23 @@ export class DbPopulateService {
 
     public async populate(): Promise<void> {
         console.log('WorkingStationPopulateStarts');
-        if ((await this.workingStationRepository.count()) === 0) {
-            const workingStations = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
+        //if ((await this.workingStationRepository.count()) === 0) {
+        const workingStations = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
 
-            const savePromises = workingStations.map((workingStationNumber) => {
-                const workingStation = new WorkingStation({ number: workingStationNumber });
-                return this.workingStationRepository.save(workingStation);
-            });
+        const savePromises = workingStations.map((workingStationNumber) => {
+            const workingStation = new WorkingStation({ number: workingStationNumber });
+            return this.workingStationRepository.save(workingStation);
+        });
 
-            await Promise.all(savePromises);
-        } else {
-            console.log('WorkingStations are already written in DB');
-        }
+        await Promise.all(savePromises);
+        //} else {
+        //console.log('WorkingStations are already written in DB');
+        //}
         console.log('WorkingStationPopulateEnded');
         console.log('ItemPopulateStarts');
-        if ((await this.itemRepository.count()) === 0) {
-            await this.fillItems();
-            /* //P1
+        //if ((await this.itemRepository.count()) === 0) {
+        await this.fillItems();
+        /* //P1
             const item26 = await this.itemRepository.findOne({ where: { itemNumber: Number(26) } });
             const item51 = await this.itemRepository.findOne({ where: { itemNumber: Number(51) } });
             const item1 = await this.itemRepository.findOne({ where: { itemNumber: Number(1) } });
@@ -99,7 +102,7 @@ export class DbPopulateService {
             item54.consistsOf = [item8, item14, item19];
             await this.itemRepository.save(item54); */
 
-            /* const itemConsists: [number, number[]][] = [
+        /* const itemConsists: [number, number[]][] = [
                 [1, [26, 51]],
                 [51, [16, 17, 50]],
                 [50, [4, 10, 49]],
@@ -121,18 +124,18 @@ export class DbPopulateService {
                     console.log(updateItem);
                 }
             } */
-        } else {
-            console.log('Items are already written in DB');
-        }
+        //} else {
+        //console.log('Items are already written in DB');
+        //}
 
         console.log('ItemPopulateEnded');
         console.log('ProuctionProcessStart');
 
-        if ((await this.productionProcessRepository.count()) === 0) {
-            await this.fillProductionProcess();
-        } else {
-            console.log('Production processes are already written in DB');
-        }
+        //if ((await this.productionProcessRepository.count()) === 0) {
+        await this.fillProductionProcess();
+        //} else {
+        //console.log('Production processes are already written in DB');
+        //}
         //productionprocessestest
         /*let productionProcessesWithChilds = [1, 3, 6, 10, 14, 12, 25, 28, 33, 37, 40, 42, 50, 55, 59, 62, 64]
         for (const pp of productionProcessesWithChilds) {
@@ -143,26 +146,26 @@ export class DbPopulateService {
                     })))
                     console.log("end");
         }*/
-            
 
         console.log('populate ProuctionProcess Ended');
         console.log('PurchasedItemStart');
-        if((await this.purchasedItemRepository.count()) === 0) {
-            await this.fillPurchasedItem();
-        }else {
-            console.log('Purchased Items are already written in DB');
-        }
+        //if((await this.purchasedItemRepository.count()) === 0) {
+        await this.fillPurchasedItem();
+        //}else {
+        //console.log('Purchased Items are already written in DB');
+        //}
         console.log('PurchasedItemEnded');
         console.log('ItemPurchasedItemStart');
-        if((await this.itemPurchasedItemRepository.count()) === 0) {
-            await this.fillItemPurchasedItem();
-        }else {
-            console.log('ItemPurchasedItems are already written in DB');
-        }
+        //if((await this.itemPurchasedItemRepository.count()) === 0) {
+        await this.fillItemPurchasedItem();
+        //}else {
+        //    console.log('ItemPurchasedItems are already written in DB');
+        //}
         console.log('ItemPurchasedItemEnded');
 
+        await this.resetWaitingList();
 
-/*         const testItemArray = [1, 51, 50, 49, 2, 56, 55, 54];
+        /*         const testItemArray = [1, 51, 50, 49, 2, 56, 55, 54];
         for (const item of testItemArray) {
             console.log(
                 await this.entityManager.getTreeRepository(Item).findDescendantsTree(
@@ -176,8 +179,8 @@ export class DbPopulateService {
 
     public async fillItems() {
         const itemNumbers = [
-            1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 161, 162, 163, 171, 172, 173, 18, 19, 20, 261, 262, 263, 29,
-            30, 31, 49, 50, 51, 54, 55, 56
+            1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 161, 162, 163, 171, 172, 173, 18, 19, 20, 261, 262, 263,
+            29, 30, 31, 49, 50, 51, 54, 55, 56,
         ];
         for (const itemNumber of itemNumbers) {
             await this.itemRepository.save(
@@ -205,7 +208,6 @@ export class DbPopulateService {
             await this.updateItemConsistsOf(31, [163, 173, 30]);
             await this.updateItemConsistsOf(30, [6, 12, 29]);
             await this.updateItemConsistsOf(29, [9, 15, 20]);
-
         } catch (error) {
             console.error('An error occurred:', error);
         }
@@ -422,7 +424,8 @@ export class DbPopulateService {
     }
     public async fillPurchasedItem() {
         const purchasedItemNumbers = [
-            21, 22, 23, 24, 25, 27, 28, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 52, 53, 57, 58, 59,
+            21, 22, 23, 24, 25, 27, 28, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 52, 53, 57,
+            58, 59,
         ];
         for (const purchasedItem of purchasedItemNumbers) {
             await this.purchasedItemRepository.save(
@@ -433,62 +436,72 @@ export class DbPopulateService {
                     warehouseStock: 0,
                     calculatedPurchase: 0,
                     itemPurchasedItems: [],
-                })
+                }),
             );
         }
     }
     public async fillItemPurchasedItem() {
         const purchasedItemNumbers = [
-            21, 22, 23, 24, 25, 27, 28, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 52, 53, 57, 58, 59,
+            21, 22, 23, 24, 25, 27, 28, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 52, 53, 57,
+            58, 59,
         ];
         const purchasedItemMapping = [
-            [1,0,0],
-            [0,1,0],
-            [0,0,1],
-            [7,7,7],
-            [4,4,4],
-            [2,2,2],
-            [4,5,6],
-            [3,3,3],
-            [0,0,2],
-            [0,0,72],
-            [4,4,4],
-            [1,1,1],
-            [1,1,1],
-            [1,1,1],
-            [2,2,2],
-            [1,1,1],
-            [1,1,1],
-            [2,2,2],
-            [1,1,1],
-            [3,3,3],
-            [1,1,1],
-            [1,1,1],
-            [1,1,1],
-            [2,2,2],
-            [2,0,0],
-            [72,0,0],
-            [0,2,0],
-            [0,72,0],
-            [2,2,2],       
-        ]
+            [1, 0, 0],
+            [0, 1, 0],
+            [0, 0, 1],
+            [7, 7, 7],
+            [4, 4, 4],
+            [2, 2, 2],
+            [4, 5, 6],
+            [3, 3, 3],
+            [0, 0, 2],
+            [0, 0, 72],
+            [4, 4, 4],
+            [1, 1, 1],
+            [1, 1, 1],
+            [1, 1, 1],
+            [2, 2, 2],
+            [1, 1, 1],
+            [1, 1, 1],
+            [2, 2, 2],
+            [1, 1, 1],
+            [3, 3, 3],
+            [1, 1, 1],
+            [1, 1, 1],
+            [1, 1, 1],
+            [2, 2, 2],
+            [2, 0, 0],
+            [72, 0, 0],
+            [0, 2, 0],
+            [0, 72, 0],
+            [2, 2, 2],
+        ];
         const ps = [
             await this.itemRepository.findOneBy({ itemNumber: 1 }),
             await this.itemRepository.findOneBy({ itemNumber: 2 }),
-            await this.itemRepository.findOneBy({ itemNumber: 3 })
-        ]
+            await this.itemRepository.findOneBy({ itemNumber: 3 }),
+        ];
         for (let i = 0; i < purchasedItemMapping.length; i++) {
             for (let j = 0; j < 3; j++) {
-                if (purchasedItemMapping[i][j]!== 0) {
+                if (purchasedItemMapping[i][j] !== 0) {
                     await this.itemPurchasedItemRepository.save(
                         new ItemPurchasedItem({
                             item: ps[j],
-                            purchasedItem: await this.purchasedItemRepository.findOneBy({ number: purchasedItemNumbers[i] }),
+                            purchasedItem: await this.purchasedItemRepository.findOneBy({
+                                number: purchasedItemNumbers[i],
+                            }),
                             multiplier: purchasedItemMapping[i][j],
-                        })
+                        }),
                     );
                 }
             }
         }
+    }
+
+    public async resetWaitingList() {
+        let waitingLists = await this.waitingListRepository.find();
+        waitingLists.forEach(async (it) => {
+            await this.waitingListRepository.remove(it);
+        });
     }
 }

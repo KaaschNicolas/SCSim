@@ -173,17 +173,14 @@ export class ItemService {
     }
 
     private async resolveChildren(item: Item, parentProdctionOrder: number) {
-        console.log('resolveChildren');
         let waitingListAmount = await this.waitingListService.getWaitingListAmountByItemId(item.itemNumber);
 
         let workInProgress = await this.waitingListService.getWorkInProgressByItemId(item.itemNumber);
-        //console.log(waitingListAmount);
-        //console.log(workInProgress);
+        console.log(waitingListAmount);
+        console.log(workInProgress);
 
         item.productionOrder = parentProdctionOrder;
-        item.productionOrder += item.safetyStock - item.warehouseStock - waitingListAmount - workInProgress;
-
-        console.log(`calculated productionOrder  ${item.productionOrder}`);
+        item.productionOrder = item.productionOrder + item.safetyStock - waitingListAmount - workInProgress;
 
         if (waitingListAmount !== null) {
             item.waitingQueue = waitingListAmount;
@@ -193,9 +190,12 @@ export class ItemService {
             item.workInProgress = workInProgress;
         }
 
+        if (item.productionOrder < 0) {
+            item.productionOrder = 0;
+        }
+
         await this.entityManager.save(item);
 
-        console.log(item.consistsOf);
         let childreen = item.consistsOf;
 
         for (var i in childreen) {
