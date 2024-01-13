@@ -156,11 +156,11 @@ export class DbPopulateService {
         //}
         console.log('PurchasedItemEnded');
         console.log('ItemPurchasedItemStart');
-        //if((await this.itemPurchasedItemRepository.count()) === 0) {
-        await this.fillItemPurchasedItem();
-        //}else {
-        //    console.log('ItemPurchasedItems are already written in DB');
-        //}
+        if ((await this.itemPurchasedItemRepository.count()) === 0) {
+            await this.fillItemPurchasedItem();
+        } else {
+            console.log('ItemPurchasedItems are already written in DB');
+        }
         console.log('ItemPurchasedItemEnded');
 
         await this.resetWaitingList();
