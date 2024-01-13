@@ -173,44 +173,63 @@ export class ItemService {
     }
 
     private async resolveChildren(item: Item, parentProdctionOrder: number) {
-        let waitingListAmount = await this.waitingListService.getWaitingListAmountByItemId(item.itemNumber);
+        if (item.itemNumber === 1 || item.itemNumber === 2 || item.itemNumber === 3) {
+            let childreen = item.consistsOf;
 
-        let workInProgress = await this.waitingListService.getWorkInProgressByItemId(item.itemNumber);
-        console.log(waitingListAmount);
-        console.log(workInProgress);
+            for (var i in childreen) {
+                if (i === null || i === undefined) {
+                    return;
+                }
+                let child = await this.itemRepository.find({
+                    relations: { consistsOf: true },
+                    where: { itemNumber: childreen[i].itemNumber },
+                });
 
-        item.productionOrder = parentProdctionOrder;
-        item.productionOrder = item.productionOrder + item.safetyStock - waitingListAmount - workInProgress;
-
-        if (waitingListAmount !== null) {
-            item.waitingQueue = waitingListAmount;
-        }
-
-        if (workInProgress !== null) {
-            item.workInProgress = workInProgress;
-        }
-
-        if (item.productionOrder < 0) {
-            item.productionOrder = 0;
-        }
-
-        await this.entityManager.save(item);
-
-        let childreen = item.consistsOf;
-
-        for (var i in childreen) {
-            if (i === null || i === undefined) {
-                return;
+                if (child === null || child === undefined) {
+                    return;
+                }
+                await this.resolveChildren(child[0], item.productionOrder);
             }
-            let child = await this.itemRepository.find({
-                relations: { consistsOf: true },
-                where: { itemNumber: childreen[i].itemNumber },
-            });
-            console.log(`child: ${child}`);
-            if (child === null || child === undefined) {
-                return;
+        } else {
+            let waitingListAmount = await this.waitingListService.getWaitingListAmountByItemId(item.itemNumber);
+
+            let workInProgress = await this.waitingListService.getWorkInProgressByItemId(item.itemNumber);
+            console.log(waitingListAmount);
+            console.log(workInProgress);
+
+            item.productionOrder = parentProdctionOrder;
+            item.productionOrder = item.productionOrder + item.safetyStock - waitingListAmount - workInProgress;
+
+            if (waitingListAmount !== null) {
+                item.waitingQueue = waitingListAmount;
             }
-            await this.resolveChildren(child[0], item.productionOrder);
+
+            if (workInProgress !== null) {
+                item.workInProgress = workInProgress;
+            }
+
+            if (item.productionOrder < 0) {
+                item.productionOrder = 0;
+            }
+
+            await this.entityManager.save(item);
+
+            let childreen = item.consistsOf;
+
+            for (var i in childreen) {
+                if (i === null || i === undefined) {
+                    return;
+                }
+                let child = await this.itemRepository.find({
+                    relations: { consistsOf: true },
+                    where: { itemNumber: childreen[i].itemNumber },
+                });
+                console.log(`child: ${child}`);
+                if (child === null || child === undefined) {
+                    return;
+                }
+                await this.resolveChildren(child[0], item.productionOrder);
+            }
         }
 
         /*
