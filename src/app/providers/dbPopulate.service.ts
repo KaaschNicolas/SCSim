@@ -149,11 +149,11 @@ export class DbPopulateService {
 
         console.log('populate ProuctionProcess Ended');
         console.log('PurchasedItemStart');
-        //if((await this.purchasedItemRepository.count()) === 0) {
-        await this.fillPurchasedItem();
-        //}else {
-        //console.log('Purchased Items are already written in DB');
-        //}
+        if ((await this.purchasedItemRepository.count()) === 0) {
+            await this.fillPurchasedItem();
+        } else {
+            console.log('Purchased Items are already written in DB');
+        }
         console.log('PurchasedItemEnded');
         console.log('ItemPurchasedItemStart');
         if ((await this.itemPurchasedItemRepository.count()) === 0) {
@@ -164,6 +164,7 @@ export class DbPopulateService {
         console.log('ItemPurchasedItemEnded');
 
         await this.resetWaitingList();
+        await this.resetPurchasedItem();
 
         /*         const testItemArray = [1, 51, 50, 49, 2, 56, 55, 54];
         for (const item of testItemArray) {
@@ -481,15 +482,14 @@ export class DbPopulateService {
             await this.itemRepository.findOneBy({ itemNumber: 2 }),
             await this.itemRepository.findOneBy({ itemNumber: 3 }),
         ];
-        for (let i = 0; i < purchasedItemMapping.length; i++) {
+        const purchasedItem = await this.purchasedItemRepository.find();
+        for (let i = 0; i < purchasedItem.length; i++) {
             for (let j = 0; j < 3; j++) {
                 if (purchasedItemMapping[i][j] !== 0) {
                     await this.itemPurchasedItemRepository.save(
                         new ItemPurchasedItem({
                             item: ps[j],
-                            purchasedItem: await this.purchasedItemRepository.findOneBy({
-                                number: purchasedItemNumbers[i],
-                            }),
+                            purchasedItem: purchasedItem[i],
                             multiplier: purchasedItemMapping[i][j],
                         }),
                     );
@@ -502,6 +502,17 @@ export class DbPopulateService {
         let waitingLists = await this.waitingListRepository.find();
         waitingLists.forEach(async (it) => {
             await this.waitingListRepository.remove(it);
+        });
+    }
+
+    public async resetPurchasedItem() {
+        let purchasedItems = await this.purchasedItemRepository.find();
+        purchasedItems.forEach(async (it) => {
+            it.ordertype = 0;
+            it.costs = 0;
+            it.warehouseStock = 0;
+            it.calculatedPurchase = 0;
+            await this.entityManager.save(it);
         });
     }
 }

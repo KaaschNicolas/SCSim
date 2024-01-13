@@ -18,10 +18,45 @@ export class WaitingListService {
     }
 
     public async createWaitingList(waitingListDto: WaitingListDto[]) {
-        //TODO itemNumber auflösen in 261, 262, 263
         waitingListDto.forEach(async (it) => {
-            let waitingList = new WaitingList(it);
-            await this.entityManager.save(waitingList);
+            switch (it.itemId) {
+                case 26:
+                    let waitingListDto26: WaitingListDto = {
+                        itemId: 261,
+                        workingStationId: it.workingStationId,
+                        amount: it.amount,
+                        timeNeed: it.timeNeed,
+                        isInWork: it.isInWork,
+                    };
+                    let waitingList26 = new WaitingList(waitingListDto26);
+                    await this.entityManager.save(waitingList26);
+                    break;
+                case 16:
+                    let waitingListDto16: WaitingListDto = {
+                        itemId: 161,
+                        workingStationId: it.workingStationId,
+                        amount: it.amount,
+                        timeNeed: it.timeNeed,
+                        isInWork: it.isInWork,
+                    };
+                    let waitingList16 = new WaitingList(waitingListDto16);
+                    await this.entityManager.save(waitingList16);
+                    break;
+                case 17:
+                    let waitingListDto17: WaitingListDto = {
+                        itemId: 171,
+                        workingStationId: it.workingStationId,
+                        amount: it.amount,
+                        timeNeed: it.timeNeed,
+                        isInWork: it.isInWork,
+                    };
+                    let waitingList17 = new WaitingList(waitingListDto17);
+                    await this.entityManager.save(waitingList17);
+                default:
+                    let waitingList = new WaitingList(it);
+                    await this.entityManager.save(waitingList);
+                    break;
+            }
         });
     }
 

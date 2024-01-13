@@ -37,11 +37,15 @@ export class OrderService {
             },
         });
 
-        purchasedItems.forEach((it) => {
-            this.calculateAmount(it);
-        });
+        this.logger.log(purchasedItems.length);
+
+        for (const purchasedItem of purchasedItems) {
+            await this.calculateAmount(purchasedItem);
+        }
 
         let finalPurchasedItems = await this.purchasedItemRepository.find();
+
+        this.logger.log(`!!!!!!!!!!!!${finalPurchasedItems.length}`);
 
         let returnValue: OrderDto[] = [];
 
@@ -74,10 +78,13 @@ export class OrderService {
         let waitingLists = await this.waitingListService.getByItemId(itemPurchasedItem.item.itemNumber);
 
         waitingLists.forEach(async (list) => {
-            purchasedItem.calculatedPurchase = itemPurchasedItem.multiplier * list.amount;
+            purchasedItem.calculatedPurchase += itemPurchasedItem.multiplier * list.amount;
         });
 
-        this.entityManager.save(purchasedItem);
+        await this.entityManager.save(purchasedItem);
+
+        this.logger.log(purchasedItem.number);
+        this.logger.log(purchasedItem.calculatedPurchase);
     }
 
     private purchasedItemToOrderDto(purchasedItem: PurchasedItem): OrderDto {

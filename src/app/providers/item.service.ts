@@ -167,9 +167,13 @@ export class ItemService {
         });
 
         //productionOrder for p1, p2, p3 must be prefilled (forecast)
-        products.forEach(async (item) => {
-            await this.resolveChildren(item, item.productionOrder);
-        });
+        //products.forEach(async (item) => {
+        //    await this.resolveChildren(item, item.productionOrder);
+        //});
+
+        for (let product of products) {
+            await this.resolveChildren(product, product.productionOrder);
+        }
     }
 
     private async resolveChildren(item: Item, parentProdctionOrder: number) {
@@ -224,7 +228,6 @@ export class ItemService {
                     relations: { consistsOf: true },
                     where: { itemNumber: childreen[i].itemNumber },
                 });
-                console.log(`child: ${child}`);
                 if (child === null || child === undefined) {
                     return;
                 }
