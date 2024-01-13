@@ -9,7 +9,6 @@ async function bootstrap() {
         cors: true,
     });
     await app.listen(3000);
-    app.enableCors();
     const dbPopulateService = app.get(DbPopulateService);
     await dbPopulateService.populate();
     console.log('It works');

@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { EntityManager, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PurchasedItem } from 'src/entity/purchasedItem.entity';
-import { PurchasedItemContainerDto } from '../dto/purchasedItemContainer.dto';
+import { PurchasedItemDto } from '../dto/purchasedItem.dto';
 
 @Injectable()
 export class PurchasedItemService {
@@ -16,11 +16,11 @@ export class PurchasedItemService {
         this.logger = new Logger();
     }
 
-    public async upsertPurchasedItems(purchasedItemContainerDto: PurchasedItemContainerDto) {
+    public async upsertPurchasedItems(purchasedItemDtoList: PurchasedItemDto[]) {
         this.logger.log('upsertPurchasedItems');
-        purchasedItemContainerDto.purchasedItems.forEach(async (it) => {
+        purchasedItemDtoList.forEach(async (it) => {
             let purchasedItem = new PurchasedItem(it);
-            await this.entityManager.save(purchasedItem);
+            await this.purchasedItemsRepository.save(purchasedItem);
         });
     }
 }

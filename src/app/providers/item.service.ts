@@ -19,9 +19,9 @@ export class ItemService {
         this.logger = new Logger(ItemService.name);
     }
 
-    public async upsertItems(itemContainerDto: ItemContainerDto) {
+    public async upsertItems(itemDtoList: ItemDto[]) {
         this.logger.log('Upserting Items');
-        itemContainerDto.itemList.forEach(async (it) => {
+        itemDtoList.forEach(async (it) => {
             switch (it.itemNumber) {
                 case 26:
                     await this.itemRepository.save({
@@ -84,39 +84,38 @@ export class ItemService {
 
     public async getAll() {
         let items = await this.itemRepository.find();
-        let itemContainerDto: ItemContainerDto = new ItemContainerDto();
-        itemContainerDto.itemList = new Array<ItemDto>();
+        let itemDtoList = new Array<ItemDto>();
         items.forEach((item) => {
             switch (item.itemNumber) {
                 case 261:
-                    this.convertMultipleToSingle(item, itemContainerDto, 26);
+                    this.convertMultipleToSingle(item, itemDtoList, 26);
                     break;
                 case 262:
-                    this.convertMultipleToSingle(item, itemContainerDto, 26);
+                    this.convertMultipleToSingle(item, itemDtoList, 26);
                     break;
                 case 263:
-                    this.convertMultipleToSingle(item, itemContainerDto, 26);
+                    this.convertMultipleToSingle(item, itemDtoList, 26);
                     break;
                 case 161:
-                    this.convertMultipleToSingle(item, itemContainerDto, 16);
+                    this.convertMultipleToSingle(item, itemDtoList, 16);
                     break;
                 case 162:
-                    this.convertMultipleToSingle(item, itemContainerDto, 16);
+                    this.convertMultipleToSingle(item, itemDtoList, 16);
                     break;
                 case 163:
-                    this.convertMultipleToSingle(item, itemContainerDto, 16);
+                    this.convertMultipleToSingle(item, itemDtoList, 16);
                     break;
                 case 171:
-                    this.convertMultipleToSingle(item, itemContainerDto, 17);
+                    this.convertMultipleToSingle(item, itemDtoList, 17);
                     break;
                 case 172:
-                    this.convertMultipleToSingle(item, itemContainerDto, 17);
+                    this.convertMultipleToSingle(item, itemDtoList, 17);
                     break;
                 case 173:
-                    this.convertMultipleToSingle(item, itemContainerDto, 17);
+                    this.convertMultipleToSingle(item, itemDtoList, 17);
                     break;
                 default:
-                    itemContainerDto.itemList?.push(
+                    itemDtoList?.push(
                         new ItemDto(
                             item.itemNumber,
                             item.safetyStock,
@@ -129,15 +128,15 @@ export class ItemService {
                     break;
             }
         });
-        return itemContainerDto;
+        return itemDtoList;
     }
 
-    private convertMultipleToSingle(item: Item, itemContainer: ItemContainerDto, itemNumber: number) {
-        let itemDto = itemContainer.itemList.find((it) => it.itemNumber === itemNumber);
+    private convertMultipleToSingle(item: Item, itemDtoList: ItemDto[], itemNumber: number) {
+        let itemDto = itemDtoList.find((it) => it.itemNumber === itemNumber);
         if (itemDto !== null && itemDto !== undefined) {
             itemDto.productionOrder = itemDto.productionOrder + item.productionOrder;
         } else {
-            itemContainer.itemList.push(
+            itemDtoList.push(
                 new ItemDto(
                     itemNumber,
                     item.safetyStock,
@@ -174,26 +173,29 @@ export class ItemService {
     }
 
     private async resolveChildren(item: Item, parentProdctionOrder: number) {
-        console.log('resolveChildren');
         let waitingListAmount = await this.waitingListService.getWaitingListAmountByItemId(item.itemNumber);
 
         let workInProgress = await this.waitingListService.getWorkInProgressByItemId(item.itemNumber);
-        //console.log(waitingListAmount);
-        //console.log(workInProgress);
+        console.log(waitingListAmount);
+        console.log(workInProgress);
 
         item.productionOrder = parentProdctionOrder;
-        item.productionOrder += item.safetyStock - item.warehouseStock - waitingListAmount - workInProgress;
+        item.productionOrder = item.productionOrder + item.safetyStock - waitingListAmount - workInProgress;
 
-        console.log(`calculated productionOrder  ${item.productionOrder}`);
-
-        if (waitingListAmount !== null || workInProgress !== null) {
+        if (waitingListAmount !== null) {
             item.waitingQueue = waitingListAmount;
+        }
+
+        if (workInProgress !== null) {
             item.workInProgress = workInProgress;
+        }
+
+        if (item.productionOrder < 0) {
+            item.productionOrder = 0;
         }
 
         await this.entityManager.save(item);
 
-        console.log(item.consistsOf);
         let childreen = item.consistsOf;
 
         for (var i in childreen) {

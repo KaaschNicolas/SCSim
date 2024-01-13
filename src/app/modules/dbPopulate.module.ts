@@ -7,9 +7,20 @@ import { ProductionProcess } from 'src/entity/productionProcess.entity';
 import { Item } from 'src/entity/item.entity';
 import { PurchasedItem } from 'src/entity/purchasedItem.entity';
 import { ItemPurchasedItem } from 'src/entity/itemPurchasedItem.entity';
+import { WaitingList } from 'src/entity/waitingList.entity';
 
 @Module({
-    imports: [DatabaseModule, TypeOrmModule.forFeature([WorkingStation, ProductionProcess, Item, PurchasedItem, ItemPurchasedItem])],
+    imports: [
+        DatabaseModule,
+        TypeOrmModule.forFeature([
+            WorkingStation,
+            ProductionProcess,
+            Item,
+            PurchasedItem,
+            ItemPurchasedItem,
+            WaitingList,
+        ]),
+    ],
     providers: [DbPopulateService],
     exports: [DbPopulateService],
 })
