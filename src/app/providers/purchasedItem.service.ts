@@ -20,7 +20,7 @@ export class PurchasedItemService {
         this.logger.log('upsertPurchasedItems');
         purchasedItemDtoList.forEach(async (it) => {
             let purchasedItem = new PurchasedItem(it);
-            await this.entityManager.save(purchasedItem);
+            await this.purchasedItemsRepository.save(purchasedItem);
         });
     }
 }
