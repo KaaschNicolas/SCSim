@@ -6,6 +6,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { WaitingList } from 'src/entity/waitingList.entity';
 import { Item } from 'src/entity/item.entity';
 import { WorkingStation } from 'src/entity/workingStation.entity';
+import { WorkingStationCapacityDto } from '../dto/workingStationCapacity.dto';
 
 @Injectable()
 export class CapacityService {
@@ -26,7 +27,23 @@ export class CapacityService {
     }
 
     public async create() {
-        let capacityContainer = new WorkingStationCapacityContainerDto();
+        let capacityList = new  Array<WorkingStationCapacityDto>(
+            new WorkingStationCapacityDto(1),
+            new WorkingStationCapacityDto(2),
+            new WorkingStationCapacityDto(3),
+            new WorkingStationCapacityDto(4),
+            new WorkingStationCapacityDto(5),
+            new WorkingStationCapacityDto(6),
+            new WorkingStationCapacityDto(7),
+            new WorkingStationCapacityDto(8),
+            new WorkingStationCapacityDto(9),
+            new WorkingStationCapacityDto(10),
+            new WorkingStationCapacityDto(11),
+            new WorkingStationCapacityDto(12),
+            new WorkingStationCapacityDto(13),
+            new WorkingStationCapacityDto(14),
+            new WorkingStationCapacityDto(15),
+        );
 
         this.logger.log('CapacityService: create()');
         const items = await this.itemRepository.find({
@@ -47,7 +64,7 @@ export class CapacityService {
                 });
 
                 for (const productionProcess of productionProcesses) {
-                    capacityContainer.workingStationCapacities[productionProcess.workingStation.number - 1].addCapacityForProductionOrder(
+                    capacityList[productionProcess.workingStation.number - 1].addCapacityForProductionOrder(
                         productionProcess.item.itemNumber,
                         item.productionOrder,
                         productionProcess.setupTime,
@@ -57,10 +74,10 @@ export class CapacityService {
             }
         }
 
-        return capacityContainer;
+        return capacityList;
     }
 
-    public async capacityWaitingList(capacityContainer: WorkingStationCapacityContainerDto) {
+    public async capacityWaitingList(capacityList: Array<WorkingStationCapacityDto>) {
         this.logger.log('CapacityService: capacityWaitingList()');
         const waitingLists = await this.waitingListRepository.find({
             where: {
@@ -88,7 +105,7 @@ export class CapacityService {
                 },
             });
 
-            capacityContainer.workingStationCapacities[waitingList.workingStationId - 1].addCapacityForWaitingList(
+            capacityList[waitingList.workingStationId - 1].addCapacityForWaitingList(
                 waitingList.itemId,
                 waitingList.amount,
                 productionProcess[0].setupTime,
@@ -96,10 +113,10 @@ export class CapacityService {
             );
         }
 
-        return capacityContainer;
+        return capacityList;
     }
 
-    public async capacityOrdersInWork(capacityContainer: WorkingStationCapacityContainerDto) {
+    public async capacityOrdersInWork(capacityList: Array<WorkingStationCapacityDto>) {
         this.logger.log('CapacityService: capacityOrdersInWork()');
         const ordersInWork = await this.waitingListRepository.find({
             where: {
@@ -129,7 +146,7 @@ export class CapacityService {
             let checkFirstItem: boolean = true;
             for (const process of descendants) {
                 if (checkFirstItem == true) {
-                    capacityContainer.workingStationCapacities[process.workingStation.number - 1].addCapacityOrdersInWork(
+                    capacityList[process.workingStation.number - 1].addCapacityOrdersInWork(
                         process.item.itemNumber,
                         orderInWork.amount,
                         0,
@@ -137,7 +154,7 @@ export class CapacityService {
                     );
                     checkFirstItem = false;
                 } else {
-                    capacityContainer.workingStationCapacities[process.workingStation.number - 1].addCapacityOrdersInWork(
+                    capacityList[process.workingStation.number - 1].addCapacityOrdersInWork(
                         process.item.itemNumber,
                         orderInWork.amount,
                         process.setupTime,
@@ -148,11 +165,11 @@ export class CapacityService {
             }
         }
 
-        capacityContainer.workingStationCapacities.forEach(capacity => {
+        capacityList.forEach(capacity => {
             capacity.calculateTotalCapacity();
             capacity.calculateTotalShiftsAndOvertime();
         });
 
-        return capacityContainer;
+        return capacityList;
     }
 }

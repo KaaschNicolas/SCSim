@@ -25,7 +25,7 @@ export class AllInOneService {
         let res1 = await this.capacityService.capacityWaitingList(res);
         allInOne.workingStationCapacities = (
             await this.capacityService.capacityOrdersInWork(res1)
-        ).workingStationCapacities;
+        );
 
         return allInOne;
     }
