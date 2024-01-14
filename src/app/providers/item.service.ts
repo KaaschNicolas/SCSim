@@ -265,7 +265,10 @@ export class ItemService {
             console.log(waitingListAmount);
             console.log(workInProgress);
 
-            item.productionOrder = parentProdctionOrder;
+            if (item.productionOrder === 0) {
+                item.productionOrder = parentProdctionOrder;
+            }
+
             item.productionOrder =
                 item.productionOrder + item.safetyStock - waitingListAmount - workInProgress - item.warehouseStock;
 
