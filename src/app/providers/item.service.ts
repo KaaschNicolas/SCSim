@@ -21,7 +21,7 @@ export class ItemService {
 
     public async upsertItems(itemDtoList: ItemDto[]) {
         this.logger.log('Upserting Items');
-        itemDtoList.forEach(async (it) => {
+        for (let it of itemDtoList) {
             switch (it.itemNumber) {
                 case 26:
                     if (it.productionOrder > 0) {
@@ -142,7 +142,8 @@ export class ItemService {
                     await this.entityManager.save(item);
                     break;
             }
-        });
+        }
+        itemDtoList.forEach(async (it) => {});
     }
 
     public async getAll() {
