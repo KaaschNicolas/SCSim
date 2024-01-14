@@ -24,55 +24,118 @@ export class ItemService {
         itemDtoList.forEach(async (it) => {
             switch (it.itemNumber) {
                 case 26:
-                    await this.itemRepository.save({
-                        itemNumber: 261,
-                        safetyStock: it.safetyStock / 3,
-                        warehouseStock: it.warehouseStock / 3,
-                    });
-                    await this.itemRepository.save({
-                        itemNumber: 262,
-                        safetyStock: it.safetyStock / 3,
-                        warehouseStock: it.warehouseStock / 3,
-                    });
-                    await this.itemRepository.save({
-                        itemNumber: 263,
-                        safetyStock: it.safetyStock / 3,
-                        warehouseStock: it.warehouseStock / 3,
-                    });
+                    if (it.productionOrder > 0) {
+                        await this.itemRepository.save({
+                            itemNumber: 261,
+                            safetyStock: it.safetyStock / 3,
+                            warehouseStock: it.warehouseStock / 3,
+                            productionOrder: it.productionOrder / 3,
+                        });
+                        await this.itemRepository.save({
+                            itemNumber: 262,
+                            safetyStock: it.safetyStock / 3,
+                            warehouseStock: it.warehouseStock / 3,
+                            productionOrder: it.productionOrder / 3,
+                        });
+                        await this.itemRepository.save({
+                            itemNumber: 263,
+                            safetyStock: it.safetyStock / 3,
+                            warehouseStock: it.warehouseStock / 3,
+                            productionOrder: it.productionOrder / 3,
+                        });
+                    } else {
+                        await this.itemRepository.save({
+                            itemNumber: 261,
+                            safetyStock: it.safetyStock / 3,
+                            warehouseStock: it.warehouseStock / 3,
+                        });
+                        await this.itemRepository.save({
+                            itemNumber: 262,
+                            safetyStock: it.safetyStock / 3,
+                            warehouseStock: it.warehouseStock / 3,
+                        });
+                        await this.itemRepository.save({
+                            itemNumber: 263,
+                            safetyStock: it.safetyStock / 3,
+                            warehouseStock: it.warehouseStock / 3,
+                        });
+                    }
                     break;
                 case 16:
-                    await this.itemRepository.save({
-                        itemNumber: 161,
-                        safetyStock: it.safetyStock / 3,
-                        warehouseStock: it.warehouseStock / 3,
-                    });
-                    await this.itemRepository.save({
-                        itemNumber: 162,
-                        safetyStock: it.safetyStock / 3,
-                        warehouseStock: it.warehouseStock / 3,
-                    });
-                    await this.itemRepository.save({
-                        itemNumber: 163,
-                        safetyStock: it.safetyStock / 3,
-                        warehouseStock: it.warehouseStock / 3,
-                    });
-                    break;
+                    if (it.productionOrder > 0) {
+                        await this.itemRepository.save({
+                            itemNumber: 161,
+                            safetyStock: it.safetyStock / 3,
+                            warehouseStock: it.warehouseStock / 3,
+                            productionOrder: it.productionOrder / 3,
+                        });
+                        await this.itemRepository.save({
+                            itemNumber: 162,
+                            safetyStock: it.safetyStock / 3,
+                            warehouseStock: it.warehouseStock / 3,
+                            productionOrder: it.productionOrder / 3,
+                        });
+                        await this.itemRepository.save({
+                            itemNumber: 163,
+                            safetyStock: it.safetyStock / 3,
+                            warehouseStock: it.warehouseStock / 3,
+                            productionOrder: it.productionOrder / 3,
+                        });
+                    } else {
+                        await this.itemRepository.save({
+                            itemNumber: 161,
+                            safetyStock: it.safetyStock / 3,
+                            warehouseStock: it.warehouseStock / 3,
+                        });
+                        await this.itemRepository.save({
+                            itemNumber: 162,
+                            safetyStock: it.safetyStock / 3,
+                            warehouseStock: it.warehouseStock / 3,
+                        });
+                        await this.itemRepository.save({
+                            itemNumber: 163,
+                            safetyStock: it.safetyStock / 3,
+                            warehouseStock: it.warehouseStock / 3,
+                        });
+                        break;
+                    }
                 case 17:
-                    await this.itemRepository.save({
-                        itemNumber: 171,
-                        safetyStock: it.safetyStock / 3,
-                        warehouseStock: it.warehouseStock / 3,
-                    });
-                    await this.itemRepository.save({
-                        itemNumber: 172,
-                        safetyStock: it.safetyStock / 3,
-                        warehouseStock: it.warehouseStock / 3,
-                    });
-                    await this.itemRepository.save({
-                        itemNumber: 173,
-                        safetyStock: it.safetyStock / 3,
-                        warehouseStock: it.warehouseStock / 3,
-                    });
+                    if (it.productionOrder > 0) {
+                        await this.itemRepository.save({
+                            itemNumber: 171,
+                            safetyStock: it.safetyStock / 3,
+                            warehouseStock: it.warehouseStock / 3,
+                            productionOrder: it.productionOrder / 3,
+                        });
+                        await this.itemRepository.save({
+                            itemNumber: 172,
+                            safetyStock: it.safetyStock / 3,
+                            warehouseStock: it.warehouseStock / 3,
+                            productionOrder: it.productionOrder / 3,
+                        });
+                        await this.itemRepository.save({
+                            itemNumber: 173,
+                            safetyStock: it.safetyStock / 3,
+                            warehouseStock: it.warehouseStock / 3,
+                            productionOrder: it.productionOrder / 3,
+                        });
+                    } else {
+                        await this.itemRepository.save({
+                            itemNumber: 171,
+                            safetyStock: it.safetyStock / 3,
+                            warehouseStock: it.warehouseStock / 3,
+                        });
+                        await this.itemRepository.save({
+                            itemNumber: 172,
+                            safetyStock: it.safetyStock / 3,
+                            warehouseStock: it.warehouseStock / 3,
+                        });
+                        await this.itemRepository.save({
+                            itemNumber: 173,
+                            safetyStock: it.safetyStock / 3,
+                            warehouseStock: it.warehouseStock / 3,
+                        });
+                    }
                     break;
                 default:
                     let item = new Item(it);
@@ -202,7 +265,8 @@ export class ItemService {
             console.log(workInProgress);
 
             item.productionOrder = parentProdctionOrder;
-            item.productionOrder = item.productionOrder + item.safetyStock - waitingListAmount - workInProgress - item.warehouseStock;
+            item.productionOrder =
+                item.productionOrder + item.safetyStock - waitingListAmount - workInProgress - item.warehouseStock;
 
             if (waitingListAmount !== null) {
                 item.waitingQueue = waitingListAmount;
