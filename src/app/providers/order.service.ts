@@ -50,6 +50,9 @@ export class OrderService {
         let returnValue: OrderDto[] = [];
 
         finalPurchasedItems.forEach((it) => {
+            if (it.calculatedPurchase <= 0) {
+                return;
+            }
             returnValue.push(this.purchasedItemToOrderDto(it));
         });
 
