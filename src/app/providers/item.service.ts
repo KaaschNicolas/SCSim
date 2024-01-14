@@ -220,7 +220,9 @@ export class ItemService {
     public async triggerCalculateBom() {
         this.logger.log('findAll');
         await this.resolveBom();
-        return await this.getAll();
+        let getAll = await this.getAll();
+        console.log(getAll);
+        return getAll;
     }
 
     private async resolveBom() {
@@ -262,8 +264,6 @@ export class ItemService {
             let waitingListAmount = await this.waitingListService.getWaitingListAmountByItemId(item.itemNumber);
 
             let workInProgress = await this.waitingListService.getWorkInProgressByItemId(item.itemNumber);
-            console.log(waitingListAmount);
-            console.log(workInProgress);
 
             if (item.productionOrder === 0) {
                 item.productionOrder = parentProdctionOrder;
