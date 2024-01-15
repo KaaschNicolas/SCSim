@@ -30,6 +30,14 @@ export class OrderService {
     }
 
     public async getOrders() {
+        let resetPurchasedItems = await this.purchasedItemRepository.find();
+        resetPurchasedItems.forEach(async (it) => {
+            it.calculatedPurchase = 0;
+            it.descriptionProductionOrder = "";
+            it.descriptionWaitingList = "";
+            await this.entityManager.save(it);
+        });
+
         let purchasedItems = await this.itemPurchasedItemRepository.find({
             relations: {
                 purchasedItem: true,
@@ -78,11 +86,17 @@ export class OrderService {
         purchasedItem.calculatedPurchase =
             itemPurchasedItem.multiplier * item.productionOrder - purchasedItem.warehouseStock;
 
+        purchasedItem.descriptionProductionOrder = "Berechnung: Es gibt insgesamt " + item.productionOrder + " Produktionaufträge für P" + item.itemNumber + ". Benötigte Stückzahl des Kaufteils für pro P" + item.itemNumber + ": " + itemPurchasedItem.multiplier + ". Abzüglich des Lagerbestands ergibt sich folgende Rechnung:" + "\n" + item.productionOrder + " * " + itemPurchasedItem.multiplier + " - " + purchasedItem.warehouseStock + " = " + purchasedItem.calculatedPurchase;
+
         let waitingLists = await this.waitingListService.getByItemId(itemPurchasedItem.item.itemNumber);
 
+
         waitingLists.forEach(async (list) => {
+            console.log(list);
             purchasedItem.calculatedPurchase += itemPurchasedItem.multiplier * list.amount;
+            purchasedItem.descriptionWaitingList = "Benötigte Menge für die Bearbeitung der Warteschlange von " + list.amount + " P" + list.itemId + "Produkten:\n" + itemPurchasedItem.multiplier + " * " + list.amount + " = " + (itemPurchasedItem.multiplier * list.amount); 
         });
+        
 
         await this.entityManager.save(purchasedItem);
 
@@ -94,7 +108,9 @@ export class OrderService {
         return {
             article: purchasedItem.number,
             quantity: purchasedItem.calculatedPurchase,
-            modus: '4',
+            modus: '5',
+            descriptionProductionOrder: purchasedItem.descriptionProductionOrder,
+            descriptionWaitingList: purchasedItem.descriptionWaitingList,
         };
     }
 }
