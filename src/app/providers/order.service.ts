@@ -83,10 +83,10 @@ export class OrderService {
             },
         });
 
-        purchasedItem.calculatedPurchase =
+        purchasedItem.calculatedPurchase +=
             itemPurchasedItem.multiplier * item.productionOrder - purchasedItem.warehouseStock;
 
-        purchasedItem.descriptionProductionOrder = "Berechnung: Es gibt insgesamt " + item.productionOrder + " Produktionaufträge für P" + item.itemNumber + ". Benötigte Stückzahl des Kaufteils für pro P" + item.itemNumber + ": " + itemPurchasedItem.multiplier + ". Abzüglich des Lagerbestands ergibt sich folgende Rechnung:" + "\n" + item.productionOrder + " * " + itemPurchasedItem.multiplier + " - " + purchasedItem.warehouseStock + " = " + purchasedItem.calculatedPurchase;
+        purchasedItem.descriptionProductionOrder += "P" + item.itemNumber + ": " + item.productionOrder + " * " + itemPurchasedItem.multiplier + " - " + purchasedItem.warehouseStock + " = " + (item.productionOrder * itemPurchasedItem.multiplier - purchasedItem.warehouseStock) + "\n";//"Berechnung: Es gibt insgesamt " + item.productionOrder + " Produktionaufträge für P" + item.itemNumber + ". Benötigte Stückzahl des Kaufteils für pro P" + item.itemNumber + ": " + itemPurchasedItem.multiplier + ". Abzüglich des Lagerbestands ergibt sich folgende Rechnung:" + "\n" + item.productionOrder + " * " + itemPurchasedItem.multiplier + " - " + purchasedItem.warehouseStock + " = " + purchasedItem.calculatedPurchase;
 
         let waitingLists = await this.waitingListService.getByItemId(itemPurchasedItem.item.itemNumber);
 
@@ -94,7 +94,7 @@ export class OrderService {
         waitingLists.forEach(async (list) => {
             console.log(list);
             purchasedItem.calculatedPurchase += itemPurchasedItem.multiplier * list.amount;
-            purchasedItem.descriptionWaitingList = "Benötigte Menge für die Bearbeitung der Warteschlange von " + list.amount + " P" + list.itemId + "Produkten:\n" + itemPurchasedItem.multiplier + " * " + list.amount + " = " + (itemPurchasedItem.multiplier * list.amount); 
+            purchasedItem.descriptionWaitingList += "P" + list.itemId +": " + itemPurchasedItem.multiplier + " * " + list.amount + " = " + (itemPurchasedItem.multiplier * list.amount) + "\n";//"Benötigte Menge für die Bearbeitung der Warteschlange von " + list.amount + " P" + list.itemId + "Produkten:\n" + itemPurchasedItem.multiplier + " * " + list.amount + " = " + (itemPurchasedItem.multiplier * list.amount); 
         });
         
 
