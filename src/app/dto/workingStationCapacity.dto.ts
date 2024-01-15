@@ -94,12 +94,12 @@ export class WorkingStationCapacityDto {
         } else if (this.totalCapacity <= 3600) {
             this.shifts = 1;
             if (this.totalCapacity > 2400) {
-                this.overtime = this.totalCapacity - 2400;
+                this.overtime = (this.totalCapacity - 2400)/5;
             }
         } else if (this.totalCapacity <= 6000) {
             this.shifts = 2;
             if (this.totalCapacity > 4800) {
-                this.overtime = this.totalCapacity - 4800;
+                this.overtime = (this.totalCapacity - 4800/5);
             }
         } else {
             this.shifts = 3;
