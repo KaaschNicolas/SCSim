@@ -19,6 +19,12 @@ export class PurchasedItem {
     @Column()
     public calculatedPurchase: number;
 
+    @Column()
+    public descriptionProductionOrder: string;
+
+    @Column()
+    public descriptionWaitingList: string;
+
     @OneToMany(() => ItemPurchasedItem, (itemPurchasedItem) => itemPurchasedItem.purchasedItem)
     public itemPurchasedItems: ItemPurchasedItem[];
 

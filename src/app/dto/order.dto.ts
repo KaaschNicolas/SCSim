@@ -6,4 +6,8 @@ export class OrderDto {
     public quantity: number;
 
     public modus: '4' | '5';
+
+    public descriptionProductionOrder: string;
+
+    public descriptionWaitingList: string;
 }
