@@ -80,7 +80,6 @@ export class WaitingListService {
         let waitingList = await this.waitingListRepository.find({
             where: { itemId: itemId, isInWork: false },
         });
-        console.log(waitingList);
         if (waitingList.length !== 0) {
             return waitingList[0].amount;
         }
@@ -91,7 +90,6 @@ export class WaitingListService {
         let waitingList = await this.waitingListRepository.find({
             where: { itemId: itemId, isInWork: true },
         });
-        console.log(waitingList);
         if (waitingList.length !== 0) {
             return waitingList[0].amount;
         }
