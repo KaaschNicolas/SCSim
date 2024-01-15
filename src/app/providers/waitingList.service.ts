@@ -77,10 +77,10 @@ export class WaitingListService {
     }
 
     public async getWaitingListAmountByItemId(itemId: number) {
-        return await this.waitingListRepository.sum('amount', { itemId: itemId, isInWork: false });
+        return (await this.waitingListRepository.findOne({ where: { itemId: itemId, isInWork: false } })).amount;
     }
 
     public async getWorkInProgressByItemId(itemId: number) {
-        return await this.waitingListRepository.sum('amount', { itemId: itemId, isInWork: true });
+        return (await this.waitingListRepository.findOne({ where: { itemId: itemId, isInWork: true } })).amount;
     }
 }
