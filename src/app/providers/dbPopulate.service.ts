@@ -59,74 +59,6 @@ export class DbPopulateService {
         console.log('ItemPopulateStarts');
         //if ((await this.itemRepository.count()) === 0) {
         await this.fillItems();
-        /* //P1
-            const item26 = await this.itemRepository.findOne({ where: { itemNumber: Number(26) } });
-            const item51 = await this.itemRepository.findOne({ where: { itemNumber: Number(51) } });
-            const item1 = await this.itemRepository.findOne({ where: { itemNumber: Number(1) } });
-            
-            console.log(item51);
-            item1.consistsOf = [item26, item51];
-            await this.itemRepository.save(item1);
-            const item16 = await this.itemRepository.findOne({ where: { itemNumber: Number(16) } });
-            const item17 = await this.itemRepository.findOne({ where: { itemNumber: Number(17) } });
-            const item50 = await this.itemRepository.findOne({ where: { itemNumber: Number(50) } });
-            item51.consistsOf = [item16, item17, item50];
-            await this.itemRepository.save(item51);
-            const item4 = await this.itemRepository.findOne({ where: { itemNumber: Number(4) } });
-            const item10 = await this.itemRepository.findOne({ where: { itemNumber: Number(10) } });
-            const item49 = await this.itemRepository.findOne({ where: { itemNumber: Number(49) } });
-            item50.consistsOf = [item4, item10, item49];
-            await this.itemRepository.save(item50);
-            const item7 = await this.itemRepository.findOne({ where: { itemNumber: Number(7) } });
-            const item13 = await this.itemRepository.findOne({ where: { itemNumber: Number(13) } });
-            const item18 = await this.itemRepository.findOne({ where: { itemNumber: Number(18) } });
-            item49.consistsOf = [item7, item13, item18];
-            await this.itemRepository.save(item49);
-            //P2
-            //const item26 = await this.itemRepository.findOne({ where: { itemNumber: Number(26) }});
-            const item56 = await this.itemRepository.findOne({ where: { itemNumber: Number(56) } });
-            const item2 = await this.itemRepository.findOne({ where: { itemNumber: Number(2) } });
-            item2.consistsOf = [item26, item56];
-            await this.itemRepository.save(item2);
-            const item55 = await this.itemRepository.findOne({ where: { itemNumber: Number(55) } });
-            item56.consistsOf = [item16, item17, item55];
-            await this.itemRepository.save(item56);
-            const item5 = await this.itemRepository.findOne({ where: { itemNumber: Number(5) } });
-            const item11 = await this.itemRepository.findOne({ where: { itemNumber: Number(11) } });
-            const item54 = await this.itemRepository.findOne({ where: { itemNumber: Number(54) } });
-            item55.consistsOf = [item5, item11, item54];
-            await this.itemRepository.save(item55);
-            const item8 = await this.itemRepository.findOne({ where: { itemNumber: Number(8) } });
-            const item14 = await this.itemRepository.findOne({ where: { itemNumber: Number(14) } });
-            const item19 = await this.itemRepository.findOne({ where: { itemNumber: Number(19) } });
-            item54.consistsOf = [item8, item14, item19];
-            await this.itemRepository.save(item54); */
-
-        /* const itemConsists: [number, number[]][] = [
-                [1, [26, 51]],
-                [51, [16, 17, 50]],
-                [50, [4, 10, 49]],
-                [49, [7, 13, 18]],
-            ];
-            for (const item of itemConsists) {
-                const mainItem = await this.itemRepository.findOne({ where: { itemNumber: Number(item[0]) } });
-                console.log(item[0]);
-                console.log(item[1]);
-                console.log('loop1');
-                console.log(mainItem);
-                for (let i = 0; i < item[1].length; i++) {
-                    console.log('item[1].length: ' + item[1].length);
-                    const updateItem = await this.itemRepository.findOne({ where: { itemNumber: Number(item[1][i]) } });
-                    console.log('parentItem: ' + mainItem);
-                    updateItem.parentItem = mainItem;
-                    await this.itemRepository.save(updateItem);
-                    console.log('loop2');
-                    console.log(updateItem);
-                }
-            } */
-        //} else {
-        //console.log('Items are already written in DB');
-        //}
 
         console.log('ItemPopulateEnded');
         console.log('ProuctionProcessStart');
@@ -136,16 +68,6 @@ export class DbPopulateService {
         } else {
             console.log('Production processes are already written in DB');
         }
-        //productionprocessestest
-        /*let productionProcessesWithChilds = [1, 3, 6, 10, 14, 12, 25, 28, 33, 37, 40, 42, 50, 55, 59, 62, 64]
-        for (const pp of productionProcessesWithChilds) {
-            console.log(pp);
-                console.log(await this.productionProcessRepository.manager.getTreeRepository(ProductionProcess).findDescendants(
-                    await this.productionProcessRepository.findOne({
-                        where: { productionProcessId: pp },
-                    })))
-                    console.log("end");
-        }*/
 
         console.log('populate ProuctionProcess Ended');
         console.log('PurchasedItemStart');
