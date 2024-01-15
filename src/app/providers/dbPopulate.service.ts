@@ -436,6 +436,8 @@ export class DbPopulateService {
                     costs: 0,
                     warehouseStock: 0,
                     calculatedPurchase: 0,
+                    descriptionProductionOrder: "",
+                    descriptionWaitingList: "",
                     itemPurchasedItems: [],
                 }),
             );
