@@ -19,10 +19,10 @@ export class PurchasedItem {
     @Column()
     public calculatedPurchase: number;
 
-    @Column()
+    @Column('decimal', { precision: 6, scale: 1 })
     public deliverytime: number;
 
-    @Column()
+    @Column('decimal', { precision: 6, scale: 1 })
     public deviation: number;
 
     @Column()
