@@ -20,6 +20,12 @@ export class PurchasedItem {
     public calculatedPurchase: number;
 
     @Column()
+    public deliverytime: number;
+
+    @Column()
+    public deviation: number;
+
+    @Column()
     public descriptionProductionOrder: string;
 
     @Column()
