@@ -6,6 +6,7 @@ import { WorkingStation } from './workingStation.entity';
 import { Module } from '@nestjs/common';
 import { WaitingList } from './waitingList.entity';
 import { ItemPurchasedItem } from './itemPurchasedItem.entity';
+import { ProductionProgram } from './productionProgram.entity';
 
 @Module({
     imports: [
@@ -16,6 +17,7 @@ import { ItemPurchasedItem } from './itemPurchasedItem.entity';
             WorkingStation,
             WaitingList,
             ItemPurchasedItem,
+            ProductionProgram,
         ]),
     ],
     exports,
