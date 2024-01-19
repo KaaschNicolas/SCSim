@@ -10,8 +10,9 @@ import { DbPopulateModule } from './app/modules/dbPopulate.module';
 import { OrderModule } from './app/modules/order.module';
 import { AllInOneModule } from './app/modules/allInOne.module';
 import { PurchasedItemsModule } from './app/modules/purchasedItems.module';
+import { FuturOrderModule } from './app/modules/futureOrder.module';
 
 @Module({
-    imports: [ConfigModule.forRoot({ isGlobal: true }), DatabaseModule, ItemModule, CapacityModule, DbPopulateModule, OrderModule, AllInOneModule, PurchasedItemsModule],
+    imports: [ConfigModule.forRoot({ isGlobal: true }), DatabaseModule, ItemModule, CapacityModule, DbPopulateModule, OrderModule, AllInOneModule, PurchasedItemsModule, FuturOrderModule],
 })
 export class AppModule {}
