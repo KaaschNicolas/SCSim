@@ -7,6 +7,7 @@ import { Module } from '@nestjs/common';
 import { WaitingList } from './waitingList.entity';
 import { ItemPurchasedItem } from './itemPurchasedItem.entity';
 import { ProductionProgram } from './productionProgram.entity';
+import { Order } from './order.entity';
 
 @Module({
     imports: [
@@ -17,6 +18,7 @@ import { ProductionProgram } from './productionProgram.entity';
             WorkingStation,
             WaitingList,
             ItemPurchasedItem,
+            Order,
             ProductionProgram,
         ]),
     ],

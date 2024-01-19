@@ -6,6 +6,7 @@ import { DatabaseModule } from 'src/database/database.module';
 import { PurchasedItemService } from './purchasedItem.service';
 import { AllInOneService } from './allInOne.service';
 import { ProductionProgramService } from './productionProgram.service';
+import { OrderService } from './order.service';
 
 @Module({
     imports: [DatabaseModule],
@@ -16,6 +17,7 @@ import { ProductionProgramService } from './productionProgram.service';
         PurchasedItemService,
         AllInOneService,
         ProductionProgramService,
+        OrderService,
     ],
 })
 export class ProviderModule {}

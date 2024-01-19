@@ -347,17 +347,47 @@ export class DbPopulateService {
     }
     public async fillPurchasedItem() {
         const purchasedItemNumbers = [
-            21, 22, 23, 24, 25, 27, 28, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 52, 53, 57,
-            58, 59,
+            [21,1.8,0.4,300],
+            [22,1.7,0.4,300],
+            [23,1.2,0.2,300],	
+            [24,3.2,0.3,6100],
+            [25,0.9,0.2,3600],
+            [27,0.9,0.2,1800],
+            [28,1.7,0.4,4500],
+            [32,2.1,0.5,2700],
+            [33,1.9,0.5,900],
+            [34,1.6,0.3,22000],
+            [35,2.2,0.4,3600],
+            [36,1.2,0.1,900],
+            [37,1.5,0.3,900],
+            [38,1.7,0.4,300],
+            [39,1.5,0.3,900],
+            [40,1.7,0.2,900],
+            [41,0.9,0.2,900],
+            [42,1.2,0.3,1800],
+            [43,2.0,0.5,1900],
+            [44,1.0,0.2,2700],
+            [45,1,7,0.3,900],
+            [46,0.9,0.3,900],
+            [47,1.1,0.1,900],
+            [48,1.0,0.2,1800],
+            [52,1.6,0.4,600],
+            [53,1.6,0.4,22000],
+            [57,1.7,0.3,600],
+            [58,1.6,0.5,22000],
+            [59,0.7,0.2,1800],
         ];
         for (const purchasedItem of purchasedItemNumbers) {
             await this.purchasedItemRepository.save(
                 new PurchasedItem({
-                    number: purchasedItem,
+                    number: purchasedItem[0],
                     ordertype: 0,
                     costs: 0,
                     warehouseStock: 0,
                     calculatedPurchase: 0,
+                    deliverytime: purchasedItem[1],
+                    deviation: purchasedItem[2],
+                    discountQuantity: purchasedItem[3],
                     descriptionProductionOrder: "",
                     descriptionWaitingList: "",
                     itemPurchasedItems: [],
@@ -366,10 +396,6 @@ export class DbPopulateService {
         }
     }
     public async fillItemPurchasedItem() {
-        const purchasedItemNumbers = [
-            21, 22, 23, 24, 25, 27, 28, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 52, 53, 57,
-            58, 59,
-        ];
         const purchasedItemMapping = [
             [1, 0, 0],
             [0, 1, 0],

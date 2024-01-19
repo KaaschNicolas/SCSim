@@ -18,6 +18,7 @@ import { ItemPurchasedItem } from 'src/entity/itemPurchasedItem.entity';
 import { PurchasedItem } from 'src/entity/purchasedItem.entity';
 import { PurchasedItemService } from '../providers/purchasedItem.service';
 import { ProductionProgram } from 'src/entity/productionProgram.entity';
+import { Order } from 'src/entity/order.entity';
 
 @Module({
     imports: [
@@ -30,6 +31,7 @@ import { ProductionProgram } from 'src/entity/productionProgram.entity';
             PurchasedItem,
             ItemPurchasedItem,
             ProductionProgram,
+            Order,
         ]),
         OrderModule,
         ItemModule,

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { DatabaseModule } from 'src/database/database.module';
 import { OrderController } from '../controllers/order.controller';
 import { OrderService } from '../providers/order.service';
@@ -12,11 +13,12 @@ import { WaitingListModule } from './waitingList.module';
 import { WaitingListService } from '../providers/waitingList.service';
 import { PurchasedItemService } from '../providers/purchasedItem.service';
 import { ProductionProgram } from 'src/entity/productionProgram.entity';
+import { Order } from 'src/entity/order.entity';
 
 @Module({
     imports: [
         DatabaseModule,
-        TypeOrmModule.forFeature([Item, WaitingList, PurchasedItem, ItemPurchasedItem, ProductionProgram]),
+        TypeOrmModule.forFeature([Item, WaitingList, PurchasedItem, ItemPurchasedItem, ProductionProgram, Order]),
         WaitingListModule,
     ],
     controllers: [OrderController],
