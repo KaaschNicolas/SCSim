@@ -6,10 +6,7 @@ import { ProductionProgramDto } from '../dto/productionProgram.dto';
 export class ProductionProgramController {
     private readonly logger: Logger;
 
-    constructor(
-        @Inject()
-        private readonly productionProgramService: ProductionProgramService,
-    ) {
+    constructor(private readonly productionProgramService: ProductionProgramService) {
         this.logger = new Logger(ProductionProgramController.name);
     }
 
