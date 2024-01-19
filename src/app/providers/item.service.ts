@@ -2,7 +2,6 @@ import { Injectable, Logger } from '@nestjs/common';
 import { EntityManager, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Item } from 'src/entity/item.entity';
-import { ItemContainerDto } from '../dto/itemContainer.dto';
 import { WaitingListService } from './waitingList.service';
 import { ItemDto } from '../dto/item.dto';
 

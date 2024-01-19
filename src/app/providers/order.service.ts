@@ -8,6 +8,9 @@ import { WaitingList } from 'src/entity/waitingList.entity';
 import { WaitingListService } from './waitingList.service';
 import { ItemService } from './item.service';
 import { OrderDto } from '../dto/order.dto';
+import { ProductionProgram } from 'src/entity/productionProgram.entity';
+import { PurchasedItemService } from './purchasedItem.service';
+import { PurchasedItemDto } from '../dto/purchasedItem.dto';
 
 @Injectable()
 export class OrderService {
@@ -16,6 +19,8 @@ export class OrderService {
     constructor(
         @Inject(WaitingListService)
         private readonly waitingListService: WaitingListService,
+        @Inject(PurchasedItemService)
+        private readonly purchasedItemService: PurchasedItemService,
         @InjectRepository(ItemPurchasedItem)
         private readonly itemPurchasedItemRepository: Repository<ItemPurchasedItem>,
         @InjectRepository(PurchasedItem)
@@ -33,8 +38,8 @@ export class OrderService {
         let resetPurchasedItems = await this.purchasedItemRepository.find();
         resetPurchasedItems.forEach(async (it) => {
             it.calculatedPurchase = 0;
-            it.descriptionProductionOrder = "";
-            it.descriptionWaitingList = "";
+            it.descriptionProductionOrder = '';
+            it.descriptionWaitingList = '';
             await this.entityManager.save(it);
         });
 
@@ -86,17 +91,35 @@ export class OrderService {
         purchasedItem.calculatedPurchase +=
             itemPurchasedItem.multiplier * item.productionOrder - purchasedItem.warehouseStock;
 
-        purchasedItem.descriptionProductionOrder += "P" + item.itemNumber + ": " + item.productionOrder + " * " + itemPurchasedItem.multiplier + " - " + purchasedItem.warehouseStock + " = " + (item.productionOrder * itemPurchasedItem.multiplier - purchasedItem.warehouseStock) + "\n";//"Berechnung: Es gibt insgesamt " + item.productionOrder + " Produktionaufträge für P" + item.itemNumber + ". Benötigte Stückzahl des Kaufteils für pro P" + item.itemNumber + ": " + itemPurchasedItem.multiplier + ". Abzüglich des Lagerbestands ergibt sich folgende Rechnung:" + "\n" + item.productionOrder + " * " + itemPurchasedItem.multiplier + " - " + purchasedItem.warehouseStock + " = " + purchasedItem.calculatedPurchase;
+        purchasedItem.descriptionProductionOrder +=
+            'P' +
+            item.itemNumber +
+            ': ' +
+            item.productionOrder +
+            ' * ' +
+            itemPurchasedItem.multiplier +
+            ' - ' +
+            purchasedItem.warehouseStock +
+            ' = ' +
+            (item.productionOrder * itemPurchasedItem.multiplier - purchasedItem.warehouseStock) +
+            '\n'; //"Berechnung: Es gibt insgesamt " + item.productionOrder + " Produktionaufträge für P" + item.itemNumber + ". Benötigte Stückzahl des Kaufteils für pro P" + item.itemNumber + ": " + itemPurchasedItem.multiplier + ". Abzüglich des Lagerbestands ergibt sich folgende Rechnung:" + "\n" + item.productionOrder + " * " + itemPurchasedItem.multiplier + " - " + purchasedItem.warehouseStock + " = " + purchasedItem.calculatedPurchase;
 
         let waitingLists = await this.waitingListService.getByItemId(itemPurchasedItem.item.itemNumber);
-
 
         waitingLists.forEach(async (list) => {
             console.log(list);
             purchasedItem.calculatedPurchase += itemPurchasedItem.multiplier * list.amount;
-            purchasedItem.descriptionWaitingList += "P" + list.itemId +": " + itemPurchasedItem.multiplier + " * " + list.amount + " = " + (itemPurchasedItem.multiplier * list.amount) + "\n";//"Benötigte Menge für die Bearbeitung der Warteschlange von " + list.amount + " P" + list.itemId + "Produkten:\n" + itemPurchasedItem.multiplier + " * " + list.amount + " = " + (itemPurchasedItem.multiplier * list.amount); 
+            purchasedItem.descriptionWaitingList +=
+                'P' +
+                list.itemId +
+                ': ' +
+                itemPurchasedItem.multiplier +
+                ' * ' +
+                list.amount +
+                ' = ' +
+                itemPurchasedItem.multiplier * list.amount +
+                '\n'; //"Benötigte Menge für die Bearbeitung der Warteschlange von " + list.amount + " P" + list.itemId + "Produkten:\n" + itemPurchasedItem.multiplier + " * " + list.amount + " = " + (itemPurchasedItem.multiplier * list.amount);
         });
-        
 
         await this.entityManager.save(purchasedItem);
 
@@ -113,4 +136,22 @@ export class OrderService {
             descriptionWaitingList: purchasedItem.descriptionWaitingList,
         };
     }
+
+    public async updateStockHistoryByForecast(purchasedItemDto: PurchasedItemDto) {
+        let needForWeek = await this.purchasedItemService.calcNeedsForWeek(purchasedItemDto);
+
+        for (let i = 0; i < needForWeek.length; i++) {
+            let amount = 0;
+            if (needForWeek[i] != 0) {
+                amount = needForWeek[i] / 5;
+            }
+            for (let j = 0; j < 5; j++) {
+                for (let k = i * 5 + j; k < 28; k++) {
+                    purchasedItemDto.stockHistory[k] - amount;
+                }
+            }
+        }
+    }
+
+    public async updateStockHistoryByOrders(purchasedItemDto: PurchasedItemDto) {}
 }

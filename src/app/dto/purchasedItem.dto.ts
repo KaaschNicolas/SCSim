@@ -1,3 +1,5 @@
+import { ProductionProgram } from 'src/entity/productionProgram.entity';
+
 export class PurchasedItemDto {
     public number: number;
 
@@ -8,4 +10,6 @@ export class PurchasedItemDto {
     public costs: number;
 
     public calculatedPurchase: number;
+
+    public stockHistory: Map<number, number>;
 }

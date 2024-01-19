@@ -6,6 +6,9 @@ export class ProductionProgram {
     public productionProgramId: number;
 
     @Column()
+    public period: number;
+
+    @Column()
     public amountP1: number;
 
     @Column()
