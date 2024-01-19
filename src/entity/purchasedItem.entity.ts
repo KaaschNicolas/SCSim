@@ -1,6 +1,7 @@
 import { Entity, PrimaryColumn, Column, ManyToMany, OneToMany } from 'typeorm';
 import { Item } from './item.entity';
 import { ItemPurchasedItem } from './itemPurchasedItem.entity';
+import { FutureOrder } from './futureOrder.entity';
 
 @Entity()
 export class PurchasedItem {
@@ -26,6 +27,9 @@ export class PurchasedItem {
     public deviation: number;
 
     @Column()
+    discountQuantity: number;
+
+    @Column()
     public descriptionProductionOrder: string;
 
     @Column()
@@ -33,6 +37,9 @@ export class PurchasedItem {
 
     @OneToMany(() => ItemPurchasedItem, (itemPurchasedItem) => itemPurchasedItem.purchasedItem)
     public itemPurchasedItems: ItemPurchasedItem[];
+
+    @OneToMany(() => FutureOrder, (futureOrder) => futureOrder.purchasedItem)
+    public futureOrder: FutureOrder[];
 
     constructor(item: Partial<PurchasedItem>) {
         Object.assign(this, item);
