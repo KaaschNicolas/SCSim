@@ -8,4 +8,8 @@ export class PurchasedItemDto {
     public costs: number;
 
     public calculatedPurchase: number;
+
+    public deliverytime: number;
+
+    public deviation: number;
 }
