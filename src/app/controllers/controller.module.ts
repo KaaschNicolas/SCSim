@@ -4,9 +4,8 @@ import { WaitingListController } from './waitingLists.controller';
 import { WorkingStationCapacityController } from './workingStationCapacity.controller';
 import { PurchasedItemController } from './purchasedItem.controller';
 import { AllInOneController } from './allInOne.controller';
-import { FutureOrderController } from './futureOrder.controller';
 
 @Module({
-    controllers: [ItemController, WaitingListController, WorkingStationCapacityController, PurchasedItemController, AllInOneController, FutureOrderController],
+    controllers: [ItemController, WaitingListController, WorkingStationCapacityController, PurchasedItemController, AllInOneController],
 })
 export class ControllerModule {}

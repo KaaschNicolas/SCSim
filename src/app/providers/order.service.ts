@@ -6,8 +6,8 @@ import { PurchasedItem } from 'src/entity/purchasedItem.entity';
 import { Item } from 'src/entity/item.entity';
 import { WaitingList } from 'src/entity/waitingList.entity';
 import { WaitingListService } from './waitingList.service';
-import { ItemService } from './item.service';
-import { OrderDto } from '../dto/order.dto';
+import { FutureOrderDto } from '../dto/futureOrder.dto';
+import { Order } from 'src/entity/order.entity';
 
 @Injectable()
 export class OrderService {
@@ -24,12 +24,48 @@ export class OrderService {
         private readonly itemRepository: Repository<Item>,
         @InjectRepository(WaitingList)
         private readonly waitingListRepository: Repository<WaitingList>,
+        @InjectRepository(Order)
+        private readonly orderRepository: Repository<Order>,
         private readonly entityManager: EntityManager,
     ) {
         this.logger = new Logger(OrderService.name);
     }
-
+    //inserts orders and calculates daysaftertoday
+    public async insert(futureOrderDto: FutureOrderDto[]) {
+        await this.orderRepository.clear();
+        this.logger.log('Inserting Orders');
+        for (let futureOrder of futureOrderDto) {
+            let purchasedItem = await this.purchasedItemRepository.findOne({
+                where: {
+                    number: futureOrder.purchasedItemId,
+                },
+            })
+            let period = 1;//TODO Echte CurPeriod auslesen!!
+            let periodDifference = period + 1 - futureOrder.orderPeriod;
+            let maxDeliveryTime = purchasedItem.deliverytime * 5 + purchasedItem.deviation * 5;
+            let daysAfterToday = 0;
+            console.log(periodDifference+ " "+periodDifference+ " "+maxDeliveryTime);
+            if (futureOrder.mode === 4){
+                daysAfterToday = maxDeliveryTime / 2 - 5 * periodDifference;
+            } else if(futureOrder.mode === 5){
+                daysAfterToday = maxDeliveryTime - 5 * periodDifference;
+            }
+            await this.orderRepository.save(new Order(
+                {
+                    purchasedItem: purchasedItem,
+                    mode: futureOrder.mode,
+                    amount: futureOrder.amount,
+                    daysAfterToday: Math.ceil(daysAfterToday),
+                }
+            ));
+        }
+    }
+    public async clear() {
+        await this.orderRepository.clear();
+    }
     public async getOrders() {
+        return null;
+    }/*
         let resetPurchasedItems = await this.purchasedItemRepository.find();
         resetPurchasedItems.forEach(async (it) => {
             it.calculatedPurchase = 0;
@@ -112,5 +148,5 @@ export class OrderService {
             descriptionProductionOrder: purchasedItem.descriptionProductionOrder,
             descriptionWaitingList: purchasedItem.descriptionWaitingList,
         };
-    }
+    }*/
 }
