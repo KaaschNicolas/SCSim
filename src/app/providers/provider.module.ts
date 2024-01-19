@@ -5,10 +5,10 @@ import { WaitingListService } from './waitingList.service';
 import { DatabaseModule } from 'src/database/database.module';
 import { PurchasedItemService } from './purchasedItem.service';
 import { AllInOneService } from './allInOne.service';
-import { FutureOrderService } from './futureOrder.service';
+import { OrderService } from './order.service';
 
 @Module({
     imports: [DatabaseModule],
-    providers: [CapacityService, ItemService, WaitingListService, PurchasedItemService, AllInOneService, FutureOrderService],
+    providers: [CapacityService, ItemService, WaitingListService, PurchasedItemService, AllInOneService, OrderService],
 })
 export class ProviderModule {}

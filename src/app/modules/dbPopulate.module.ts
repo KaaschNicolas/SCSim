@@ -8,7 +8,7 @@ import { Item } from 'src/entity/item.entity';
 import { PurchasedItem } from 'src/entity/purchasedItem.entity';
 import { ItemPurchasedItem } from 'src/entity/itemPurchasedItem.entity';
 import { WaitingList } from 'src/entity/waitingList.entity';
-import { FutureOrder } from 'src/entity/futureOrder.entity';
+import { Order } from 'src/entity/order.entity';
 
 @Module({
     imports: [
@@ -20,7 +20,7 @@ import { FutureOrder } from 'src/entity/futureOrder.entity';
             PurchasedItem,
             ItemPurchasedItem,
             WaitingList,
-            FutureOrder,
+            Order,
         ]),
     ],
     providers: [DbPopulateService],
