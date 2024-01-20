@@ -70,8 +70,15 @@ export class OrderService {
         await this.orderRepository.clear();
     }
     public async getOrders() {
-        return null;
+        let allOrders = await this.orderRepository.find();
+
+        let purchasedItems = await this.purchasedItemRepository.find();
+
+        for (let purchasedItem of purchasedItems) {
+        }
     }
+
+    private;
 
     public async updateStockHistoryByForecast(purchasedItemDto: PurchasedItemDto) {
         let needForWeek = await this.purchasedItemService.calcNeedsForWeek(purchasedItemDto);
