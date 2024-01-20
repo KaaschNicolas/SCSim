@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import { DatabaseModule } from 'src/database/database.module';
 import { OrderController } from '../controllers/order.controller';
 import { OrderService } from '../providers/order.service';

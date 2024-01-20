@@ -100,5 +100,22 @@ export class OrderService {
         }
     }
 
-    public async updateStockHistoryByOrders(purchasedItemDto: PurchasedItemDto) {}
+    public async updateStockHistoryByOrders(purchasedItemDto: PurchasedItemDto) {
+        let orders = await this.orderRepository.find({
+            relations: {
+                purchasedItem: true,
+            },
+        });
+
+        for (let order of orders) {
+            if (order.purchasedItem.number == purchasedItemDto.number) {
+                if (order.daysAfterToday < 0) {
+                    order.daysAfterToday = 0;
+                }
+                for (let i = 0; i < 28; i++) {
+                    purchasedItemDto.stockHistory.set(i, purchasedItemDto.stockHistory[i] + order.amount);
+                }
+            }
+        }
+    }
 }
