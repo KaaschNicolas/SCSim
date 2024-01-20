@@ -1,3 +1,5 @@
+import { ProductionProgram } from 'src/entity/productionProgram.entity';
+
 export class PurchasedItemDto {
     public number: number;
 
@@ -12,4 +14,6 @@ export class PurchasedItemDto {
     public deliverytime: number;
 
     public deviation: number;
+
+    public stockHistory: Map<number, number>;
 }

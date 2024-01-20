@@ -2,7 +2,6 @@ import { Injectable, Logger } from '@nestjs/common';
 import { EntityManager, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Item } from 'src/entity/item.entity';
-import { ItemContainerDto } from '../dto/itemContainer.dto';
 import { WaitingListService } from './waitingList.service';
 import { ItemDto } from '../dto/item.dto';
 
@@ -199,6 +198,8 @@ export class ItemService {
         let itemDto = itemDtoList.find((it) => it.itemNumber === itemNumber);
         if (itemDto !== null && itemDto !== undefined) {
             itemDto.productionOrder = itemDto.productionOrder + item.productionOrder;
+            itemDto.warehouseStock = itemDto.warehouseStock + item.warehouseStock;
+            itemDto.safetyStock = itemDto.safetyStock + item.safetyStock;
         } else {
             itemDtoList.push(
                 new ItemDto(
@@ -220,9 +221,7 @@ export class ItemService {
     public async triggerCalculateBom() {
         this.logger.log('findAll');
         await this.resolveBom();
-        let getAll = await this.getAll();
-        console.log(getAll);
-        return getAll;
+        return await this.getAll();
     }
 
     private async resolveBom() {
@@ -268,7 +267,10 @@ export class ItemService {
             if (item.productionOrder === 0) {
                 item.productionOrder = parentProdctionOrder;
             }
-
+            console.log(item.itemNumber);
+            console.log(item.productionOrder);
+            console.log(item.safetyStock);
+            console.log(item.warehouseStock);
             item.productionOrder =
                 item.productionOrder + item.safetyStock - waitingListAmount - workInProgress - item.warehouseStock;
 

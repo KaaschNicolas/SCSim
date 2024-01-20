@@ -1,7 +1,6 @@
 import { ProductionProcess } from 'src/entity/productionProcess.entity';
 import { Repository, EntityManager } from 'typeorm';
 import { Injectable, Logger } from '@nestjs/common';
-import { WorkingStationCapacityContainerDto } from '../dto/workingStationCapacityContainer.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { WaitingList } from 'src/entity/waitingList.entity';
 import { Item } from 'src/entity/item.entity';
@@ -27,7 +26,7 @@ export class CapacityService {
     }
 
     public async create() {
-        let capacityList = new  Array<WorkingStationCapacityDto>(
+        let capacityList = new Array<WorkingStationCapacityDto>(
             new WorkingStationCapacityDto(1),
             new WorkingStationCapacityDto(2),
             new WorkingStationCapacityDto(3),
@@ -56,11 +55,11 @@ export class CapacityService {
         for (const item of items) {
             if (item.productionOrder > 0) {
                 const productionProcesses = await this.productionProcessRepository.find({
-                    where: [{item: item}],
-                    relations: { 
+                    where: [{ item: item }],
+                    relations: {
                         workingStation: true,
-                        item: true, 
-                    }
+                        item: true,
+                    },
                 });
 
                 for (const productionProcess of productionProcesses) {
@@ -142,7 +141,9 @@ export class CapacityService {
                 },
             });
 
-            const descendants = await this.entityManager.getTreeRepository(ProductionProcess).findDescendants(productionProcess[0], { relations: ['workingStation', 'item'] });
+            const descendants = await this.entityManager
+                .getTreeRepository(ProductionProcess)
+                .findDescendants(productionProcess[0], { relations: ['workingStation', 'item'] });
             let checkFirstItem: boolean = true;
             for (const process of descendants) {
                 if (checkFirstItem == true) {
@@ -158,14 +159,13 @@ export class CapacityService {
                         process.item.itemNumber,
                         orderInWork.amount,
                         process.setupTime,
-                        process.processingTime * orderInWork.amount
+                        process.processingTime * orderInWork.amount,
                     );
                 }
-
             }
         }
 
-        capacityList.forEach(capacity => {
+        capacityList.forEach((capacity) => {
             capacity.calculateTotalCapacity();
             capacity.calculateTotalShiftsAndOvertime();
         });

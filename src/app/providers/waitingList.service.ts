@@ -2,7 +2,6 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { WaitingList } from 'src/entity/waitingList.entity';
 import { Repository, EntityManager } from 'typeorm';
-import { WaitingListContainerDto } from '../dto/waitingListContainer.dto';
 import { WaitingListDto } from '../dto/waitingList.dto';
 
 @Injectable()
@@ -80,7 +79,6 @@ export class WaitingListService {
         let waitingList = await this.waitingListRepository.find({
             where: { itemId: itemId, isInWork: false },
         });
-        console.log(waitingList);
         if (waitingList.length !== 0) {
             return waitingList[0].amount;
         }
@@ -91,7 +89,6 @@ export class WaitingListService {
         let waitingList = await this.waitingListRepository.find({
             where: { itemId: itemId, isInWork: true },
         });
-        console.log(waitingList);
         if (waitingList.length !== 0) {
             return waitingList[0].amount;
         }

@@ -5,6 +5,7 @@ import { Order } from 'src/entity/order.entity';
 import { Item } from 'src/entity/item.entity';
 import { ItemPurchasedItem } from 'src/entity/itemPurchasedItem.entity';
 import { ProductionProcess } from 'src/entity/productionProcess.entity';
+import { ProductionProgram } from 'src/entity/productionProgram.entity';
 import { PurchasedItem } from 'src/entity/purchasedItem.entity';
 import { WaitingList } from 'src/entity/waitingList.entity';
 import { WorkingStation } from 'src/entity/workingStation.entity';
@@ -15,7 +16,14 @@ import { WorkingStation } from 'src/entity/workingStation.entity';
         TypeOrmModule.forRootAsync({
             useFactory: (config: ConfigService) => ({
                 type: 'mssql',
-                entities: [Item, PurchasedItem, WorkingStation, ProductionProcess, ItemPurchasedItem, WaitingList, Order],
+                entities: [Item, 
+                    PurchasedItem, 
+                    WorkingStation, 
+                    ProductionProcess, 
+                    ItemPurchasedItem, 
+                    WaitingList,
+                    Order,
+                    ProductionProgram],
                 host: config.getOrThrow('SQL_HOST'),
                 port: 1433,
                 username: config.getOrThrow('SQL_USERNAME'),
