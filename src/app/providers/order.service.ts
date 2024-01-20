@@ -12,6 +12,7 @@ import { Order } from 'src/entity/order.entity';
 import { PurchasedItemDto } from '../dto/purchasedItem.dto';
 import { PurchasedItemService } from './purchasedItem.service';
 import { OrderDto } from '../dto/order.dto';
+import { ItemDto } from '../dto/item.dto';
 
 @Injectable()
 export class OrderService {
@@ -74,11 +75,35 @@ export class OrderService {
 
         let purchasedItems = await this.purchasedItemRepository.find();
 
+        let purchasedItemDtos: Array<PurchasedItemDto> = [];
         for (let purchasedItem of purchasedItems) {
+            purchasedItemDtos.push(this.convertPurchasedItemToDto(purchasedItem));
         }
+
+        for (let purchasedItemDto of purchasedItemDtos) {
+            this.updateStockHistoryByOrders(purchasedItemDto);
+
+            this.updateStockHistoryByForecast(purchasedItemDto);
+        }
+
+        let actualOrders = this.createOrders(purchasedItemDtos);
+
+        return actualOrders;
     }
 
-    private;
+    private convertPurchasedItemToDto(purchasedItem: PurchasedItem): PurchasedItemDto {
+        return {
+            number: purchasedItem.number,
+            ordertype: purchasedItem.ordertype,
+            warehouseStock: purchasedItem.warehouseStock,
+            costs: purchasedItem.costs,
+            calculatedPurchase: purchasedItem.calculatedPurchase,
+            deliverytime: purchasedItem.deliverytime,
+            deviation: purchasedItem.deviation,
+            discountQuantity: purchasedItem.discountQuantity,
+            stockHistory: new Map<number, number>(),
+        };
+    }
 
     public async updateStockHistoryByForecast(purchasedItemDto: PurchasedItemDto) {
         let needForWeek = await this.purchasedItemService.calcNeedsForWeek(purchasedItemDto);
