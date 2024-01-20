@@ -7,7 +7,17 @@ export class OrderDto {
 
     public modus: '4' | '5';
 
-    public descriptionProductionOrder: string;
-
-    public descriptionWaitingList: string;
+    public description: string;
+    
+    constructor(
+        article: number,
+        quantity: number,
+        modus: '4' | '5',
+        description: string,
+    ) {
+        (this.article = article),
+        (this.quantity = quantity),
+        (this.modus = modus),
+        (this.description = description);
+    }
 }

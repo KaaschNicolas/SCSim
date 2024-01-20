@@ -6,13 +6,12 @@ import { PurchasedItem } from 'src/entity/purchasedItem.entity';
 import { Item } from 'src/entity/item.entity';
 import { WaitingList } from 'src/entity/waitingList.entity';
 import { WaitingListService } from './waitingList.service';
-import { ItemService } from './item.service';
-import { OrderDto } from '../dto/order.dto';
 import { ProductionProgram } from 'src/entity/productionProgram.entity';
-import { PurchasedItemService } from './purchasedItem.service';
-import { PurchasedItemDto } from '../dto/purchasedItem.dto';
 import { FutureOrderDto } from '../dto/futureOrder.dto';
 import { Order } from 'src/entity/order.entity';
+import { PurchasedItemDto } from '../dto/purchasedItem.dto';
+import { PurchasedItemService } from './purchasedItem.service';
+import { OrderDto } from '../dto/order.dto';
 
 @Injectable()
 export class OrderService {
@@ -74,16 +73,6 @@ export class OrderService {
         return null;
     }
 
-    private purchasedItemToOrderDto(purchasedItem: PurchasedItem): OrderDto {
-        return {
-            article: purchasedItem.number,
-            quantity: purchasedItem.calculatedPurchase,
-            modus: '5',
-            descriptionProductionOrder: purchasedItem.descriptionProductionOrder,
-            descriptionWaitingList: purchasedItem.descriptionWaitingList,
-        };
-    }
-
     public async updateStockHistoryByForecast(purchasedItemDto: PurchasedItemDto) {
         let needForWeek = await this.purchasedItemService.calcNeedsForWeek(purchasedItemDto);
 
@@ -114,6 +103,60 @@ export class OrderService {
                 }
                 for (let i = order.daysAfterToday; i < 28; i++) {
                     purchasedItemDto.stockHistory.set(i, purchasedItemDto.stockHistory[i] + order.amount);
+                }
+            }
+        }
+    }
+
+    public async createOrders(purchasedItemDtoList: PurchasedItemDto[]) {
+        this.logger.log('createOrders');
+        const newOrders = Array<OrderDto>();
+        for (const purchasedItem of purchasedItemDtoList) {
+            //Ich brauche im OrderDto noch die discountquantity
+            let discountQuantity = purchasedItem.discountQuantity; //!!!
+            let descriptionString: string;
+            this.logger.log('Berechne Bestellungen für Produkt: ${purchasedItem.number}');
+            let maxDeliveryTime = purchasedItem.deliverytime + purchasedItem.deviation;
+            this.logger.log('MaxDeliveryTime: ${maxDeliveryTime}');
+            //Lagerbestandsverlauf?
+            for (let i = 0; i < 20; i++) {
+                if (
+                    purchasedItem.stockHistory.get(i + 1) < 0 &&
+                    purchasedItem.stockHistory.get(i + 2) < 0 &&
+                    purchasedItem.stockHistory.get(i + 3) < 0 &&
+                    purchasedItem.stockHistory.get(i + 4) < 0
+                ) {
+                    let orderDay = (purchasedItem.deliverytime + purchasedItem.deviation) * 5;
+                    this.logger.log(orderDay);
+                    if (orderDay < 6) {
+                        this.logger.log('Produkt geht an Tag ${i} aus und wird am Tag ${orderDay} bestellt');
+                        descriptionString = 'Produkt geht an Tag ${i} aus und wird am Tag ${orderDay} bestellt\n';
+                    }
+                    //Bestand in OrderHistory aktualisieren für aktualisierten Lagerbestandsverlauf
+                    for (let j = i; j < 27; j++) {
+                        let newStock = purchasedItem.stockHistory.get(j) + discountQuantity;
+                        purchasedItem.stockHistory.set(j, newStock);
+                        if (j == 26) {
+                            this.logger.log('Neuer Lagerbestand: ${purchasedItem.stockHistory.get(26)}');
+                        }
+                    }
+
+                    if (orderDay >= 0 && orderDay < 5) {
+                        this.logger.log(
+                            'Neue Bestellung mit Modus 5 für Produkt ${purchasedItem.number}: Menge: ${discountQuantity}',
+                        );
+                        //das muss auch wieder ans Frontend
+                        descriptionString +=
+                            'Neue Bestellung mit Modus 5 für Produkt ${purchasedItem.number}: Menge: ${discountQuantity}';
+                        newOrders.push(new OrderDto(purchasedItem.number, discountQuantity, '5', descriptionString));
+                    } else if (orderDay < 0) {
+                        this.logger.log(
+                            'Neue Eilbestellung mit Modus 4 Produkt ${purchasedItem.number}: Menge: ${discountQuantity}',
+                        );
+                        descriptionString +=
+                            'Neue Eilbestellung mit Modus 4 Produkt ${purchasedItem.number}: Menge: ${discountQuantity}';
+                        newOrders.push(new OrderDto(purchasedItem.number, discountQuantity, '4', descriptionString));
+                    }
                 }
             }
         }

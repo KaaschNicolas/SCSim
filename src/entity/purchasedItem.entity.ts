@@ -30,10 +30,7 @@ export class PurchasedItem {
     discountQuantity: number;
 
     @Column()
-    public descriptionProductionOrder: string;
-
-    @Column()
-    public descriptionWaitingList: string;
+    public description: string;
 
     @OneToMany(() => ItemPurchasedItem, (itemPurchasedItem) => itemPurchasedItem.purchasedItem)
     public itemPurchasedItems: ItemPurchasedItem[];
