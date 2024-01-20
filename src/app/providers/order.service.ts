@@ -112,7 +112,7 @@ export class OrderService {
                 if (order.daysAfterToday < 0) {
                     order.daysAfterToday = 0;
                 }
-                for (let i = 0; i < 28; i++) {
+                for (let i = order.daysAfterToday; i < 28; i++) {
                     purchasedItemDto.stockHistory.set(i, purchasedItemDto.stockHistory[i] + order.amount);
                 }
             }
