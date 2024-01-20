@@ -15,5 +15,7 @@ export class PurchasedItemDto {
 
     public deviation: number;
 
+    public discountQuantity: number;
+
     public stockHistory: Map<number, number>;
 }
