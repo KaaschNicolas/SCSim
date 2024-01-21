@@ -6,4 +6,5 @@ export class ProductionProgramDto {
     public amountP2: number;
 
     public amountP3: number;
+
 }

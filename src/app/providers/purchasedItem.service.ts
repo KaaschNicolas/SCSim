@@ -31,7 +31,11 @@ export class PurchasedItemService {
     }
 
     public async calcNeedsForWeek(purchasedItemDto: PurchasedItemDto) {
-        let purchasedItem = new PurchasedItem(purchasedItemDto);
+        let purchasedItem = await this.purchasedItemsRepository.findOne({
+            where: {
+                number: purchasedItemDto.number,
+            }
+        });
 
         let itemPurchasedItems = await this.itemPurchasedItemRepository.find({
             where: {

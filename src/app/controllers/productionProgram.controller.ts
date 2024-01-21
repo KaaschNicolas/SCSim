@@ -1,4 +1,4 @@
-import { Controller, Inject, Logger, Post } from '@nestjs/common';
+import { Body, Controller, Inject, Logger, Post } from '@nestjs/common';
 import { ProductionProgramService } from '../providers/productionProgram.service';
 import { ProductionProgramDto } from '../dto/productionProgram.dto';
 
@@ -11,7 +11,9 @@ export class ProductionProgramController {
     }
 
     @Post()
-    upsertProductionProgram(productionProgramDtoList: ProductionProgramDto[]) {
+    upsertProductionProgram(@Body() productionProgramDtoList: ProductionProgramDto[]) {
+        console.log(productionProgramDtoList);
+        console.log(productionProgramDtoList.length);
         return this.productionProgramService.upsertProductionProgram(productionProgramDtoList);
     }
 }

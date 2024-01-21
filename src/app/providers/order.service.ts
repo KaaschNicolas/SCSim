@@ -38,7 +38,7 @@ export class OrderService {
         this.logger = new Logger(OrderService.name);
     }
 
-    public async insert(futureOrderDto: FutureOrderDto[]) {
+    public async insert(futureOrderDto: FutureOrderDto[], period: number) {
         await this.orderRepository.clear();
         this.logger.log('Inserting Orders');
         for (let futureOrder of futureOrderDto) {
@@ -47,7 +47,9 @@ export class OrderService {
                     number: futureOrder.purchasedItemId,
                 },
             });
-            let period = 1; //TODO Echte CurPeriod auslesen!!
+            if (period === undefined || period === null) {
+                console.log("keine Period gesetzt Alarm");
+            }
             let periodDifference = period + 1 - futureOrder.orderPeriod;
             let maxDeliveryTime = purchasedItem.deliverytime * 5 + purchasedItem.deviation * 5;
             let daysAfterToday = 0;

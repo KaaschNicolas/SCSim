@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 import { OrderService } from '../providers/order.service';
 import { FutureOrderDto } from '../dto/futureOrder.dto';
 
@@ -8,10 +8,10 @@ export class OrderController {
 
     @Get()
     getOrders() {
-        //return this.orderService.getOrders();
+        return this.orderService.getOrders();
     }
     @Post()
-    postOrders(@Body() futureOrder: FutureOrderDto[]) {
-        this.orderService.insert(futureOrder);
+    postOrders(@Query('period') period: number, @Body() futureOrder: FutureOrderDto[]) {
+        this.orderService.insert(futureOrder, period);
     }
 }

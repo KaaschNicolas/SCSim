@@ -16,4 +16,8 @@ export class ProductionProgram {
 
     @Column()
     public amountP3: number;
+
+    constructor(productionProgram: Partial<ProductionProgram>) {
+        Object.assign(this, productionProgram);
+    }
 }
