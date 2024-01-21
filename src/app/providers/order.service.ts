@@ -193,8 +193,9 @@ export class OrderService {
 
     public async createOrders(purchasedItemDtoList: PurchasedItemDto[]) {
         this.logger.log('createOrders');
-        const newOrders = Array<OrderDto>();
+        let newOrders = Array<OrderDto>();
         for (const purchasedItem of purchasedItemDtoList){
+            const orders = Array<OrderDto>();
             //Ich brauche im OrderDto noch die discountquantity
             let discountQuantity = purchasedItem.discountQuantity; //!!!
             let descriptionString: string;
@@ -223,7 +224,7 @@ export class OrderService {
                         this.logger.log("Neue Bestellung mit Modus 5 für Produkt ${purchasedItem.number}: Menge: ${discountQuantity}");
                         //das muss auch wieder ans Frontend
                         descriptionString += "Neue Bestellung mit Modus 5 für Produkt ${purchasedItem.number}: Menge: ${discountQuantity}";
-                        newOrders.push(new OrderDto(
+                        orders.push(new OrderDto(
                             purchasedItem.number,
                             discountQuantity,
                             '5',
@@ -232,7 +233,7 @@ export class OrderService {
                     } else if (orderDay < 0) {
                         this.logger.log("Neue Eilbestellung mit Modus 4 Produkt ${purchasedItem.number}: Menge: ${discountQuantity}");
                         descriptionString += "Neue Eilbestellung mit Modus 4 Produkt ${purchasedItem.number}: Menge: ${discountQuantity}";
-                        newOrders.push(new OrderDto(
+                        orders.push(new OrderDto(
                             purchasedItem.number,
                             discountQuantity,
                             '4',
@@ -241,6 +242,21 @@ export class OrderService {
                     }
                 }
             }
+            if (orders.length > 1) {
+                let amount: number = 0;
+                orders.forEach(order => {
+                    amount += order.quantity;
+                });
+                newOrders.push(new OrderDto(
+                    orders[0].article,
+                    amount,
+                    orders[0].modus,
+                    "Mehrere Bestellungen für Kaufteil ${orders[0].article} mit Modus 5 in der gleichen Periode wurden zusammengeführt: Menge: ${amount}"
+                    ));
+            } else if (orders.length === 1) {
+                newOrders.push(orders[0]);
+            }
         }
+        return newOrders;
     }
 }
