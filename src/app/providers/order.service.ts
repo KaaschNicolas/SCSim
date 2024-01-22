@@ -85,9 +85,9 @@ export class OrderService {
         }
 
         for (let purchasedItemDto of purchasedItemDtos) {
-            this.updateStockHistoryByOrders(purchasedItemDto);
+            await this.updateStockHistoryByOrders(purchasedItemDto);
 
-            this.updateStockHistoryByForecast(purchasedItemDto);
+            await this.updateStockHistoryByForecast(purchasedItemDto);
         }
 
         let actualOrders = await this.createOrders(purchasedItemDtos);
@@ -157,6 +157,7 @@ export class OrderService {
             this.logger.log(`MaxDeliveryTime: ${maxDeliveryTime}`);
             //Lagerbestandsverlauf?
             for (let i = 0; i < 20; i++) {
+                console.log(purchasedItem.stockHistory.get(i));
                 if (
                     purchasedItem.stockHistory.get(i + 1) < 0 &&
                     purchasedItem.stockHistory.get(i + 2) < 0 &&
