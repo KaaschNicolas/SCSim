@@ -56,13 +56,13 @@ export class PurchasedItemService {
             let value = 0;
             for (let ipi of itemPurchasedItems) {
                 if (ipi.item.itemNumber == 1) {
-                    value += ipi.item.productionOrder * ipi.multiplier * pp.amountP1;
+                    value += ipi.multiplier * pp.amountP1;
                 }
                 if (ipi.item.itemNumber == 2) {
-                    value += ipi.item.productionOrder * ipi.multiplier * pp.amountP2;
+                    value += ipi.multiplier * pp.amountP2;
                 }
                 if (ipi.item.itemNumber == 3) {
-                    value += ipi.item.productionOrder * ipi.multiplier * pp.amountP3;
+                    value += ipi.multiplier * pp.amountP3;
                 }
             }
             this.logger.log(`value ${value} of purchasedItem ${purchasedItem.number}`);

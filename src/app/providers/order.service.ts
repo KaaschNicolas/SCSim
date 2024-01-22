@@ -119,7 +119,7 @@ export class OrderService {
             }
             for (let j = 0; j < 5; j++) {
                 for (let k = i * 5 + j; k < 28; k++) {
-                    purchasedItemDto.stockHistory[k] - amount;
+                    purchasedItemDto.stockHistory.set(i, purchasedItemDto.stockHistory.get(k) - amount);
                 }
             }
         }
@@ -138,7 +138,7 @@ export class OrderService {
                     order.daysAfterToday = 0;
                 }
                 for (let i = order.daysAfterToday; i < 28; i++) {
-                    purchasedItemDto.stockHistory.set(i, purchasedItemDto.stockHistory[i] + order.amount);
+                    purchasedItemDto.stockHistory.set(i, purchasedItemDto.stockHistory.get(i) + order.amount);
                 }
             }
         }
@@ -157,7 +157,7 @@ export class OrderService {
             this.logger.log(`MaxDeliveryTime: ${maxDeliveryTime}`);
             //Lagerbestandsverlauf?
             for (let i = 0; i < 20; i++) {
-                console.log(purchasedItem.stockHistory.get(i));
+                console.log(purchasedItem.stockHistory.get(i)); //scheint immer undefined zu sein
                 if (
                     purchasedItem.stockHistory.get(i + 1) < 0 &&
                     purchasedItem.stockHistory.get(i + 2) < 0 &&
