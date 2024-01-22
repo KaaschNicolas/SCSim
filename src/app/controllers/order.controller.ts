@@ -10,6 +10,7 @@ export class OrderController {
     getOrders() {
         return this.orderService.getOrders();
     }
+
     @Post()
     postOrders(@Query('period') period: number, @Body() futureOrder: FutureOrderDto[]) {
         this.orderService.insert(futureOrder, period);

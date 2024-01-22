@@ -15,15 +15,18 @@ export class ProductionProgramService {
     ) {
         this.logger = new Logger(ProductionProgramService.name);
     }
+
     public async upsertProductionProgram(productionProgram: ProductionProgramDto[]) {
-        console.log(productionProgram);
+        await this.productionProgramRepository.clear();
         for (let pp of productionProgram) {
-            await this.productionProgramRepository.save(new ProductionProgram({
-                period: pp.period,
-                amountP1: pp.amountP1,
-                amountP2: pp.amountP2,
-                amountP3: pp.amountP3,
-            }))
+            await this.productionProgramRepository.save(
+                new ProductionProgram({
+                    period: pp.period,
+                    amountP1: pp.amountP1,
+                    amountP2: pp.amountP2,
+                    amountP3: pp.amountP3,
+                }),
+            );
         }
     }
 }

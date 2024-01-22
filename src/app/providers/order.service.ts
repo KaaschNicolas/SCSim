@@ -48,7 +48,7 @@ export class OrderService {
                 },
             });
             if (period === undefined || period === null) {
-                console.log("keine Period gesetzt Alarm");
+                console.log('keine Period gesetzt Alarm');
             }
             let periodDifference = period + 1 - futureOrder.orderPeriod;
             let maxDeliveryTime = purchasedItem.deliverytime * 5 + purchasedItem.deviation * 5;
@@ -69,9 +69,11 @@ export class OrderService {
             );
         }
     }
+
     public async clear() {
         await this.orderRepository.clear();
     }
+
     public async getOrders() {
         let allOrders = await this.orderRepository.find();
 
@@ -88,7 +90,7 @@ export class OrderService {
             this.updateStockHistoryByForecast(purchasedItemDto);
         }
 
-        let actualOrders = this.createOrders(purchasedItemDtos);
+        let actualOrders = await this.createOrders(purchasedItemDtos);
 
         return actualOrders;
     }
@@ -145,14 +147,14 @@ export class OrderService {
     public async createOrders(purchasedItemDtoList: PurchasedItemDto[]) {
         this.logger.log('createOrders');
         let newOrders = Array<OrderDto>();
-        for (const purchasedItem of purchasedItemDtoList){
+        for (const purchasedItem of purchasedItemDtoList) {
             const orders = Array<OrderDto>();
             //Ich brauche im OrderDto noch die discountquantity
             let discountQuantity = purchasedItem.discountQuantity; //!!!
             let descriptionString: string;
-            this.logger.log('Berechne Bestellungen für Produkt: ${purchasedItem.number}');
+            this.logger.log(`Berechne Bestellungen für Produkt: ${purchasedItem.number}`);
             let maxDeliveryTime = purchasedItem.deliverytime + purchasedItem.deviation;
-            this.logger.log('MaxDeliveryTime: ${maxDeliveryTime}');
+            this.logger.log(`MaxDeliveryTime: ${maxDeliveryTime}`);
             //Lagerbestandsverlauf?
             for (let i = 0; i < 20; i++) {
                 if (
@@ -172,45 +174,39 @@ export class OrderService {
                         let newStock = purchasedItem.stockHistory.get(j) + discountQuantity;
                         purchasedItem.stockHistory.set(j, newStock);
                         if (j == 26) {
-                            this.logger.log('Neuer Lagerbestand: ${purchasedItem.stockHistory.get(26)}');
+                            this.logger.log(`Neuer Lagerbestand: ${purchasedItem.stockHistory.get(26)}`);
                         }
                     }
 
                     if (orderDay >= 0 && orderDay < 5) {
                         this.logger.log(
-                            'Neue Bestellung mit Modus 5 für Produkt ${purchasedItem.number}: Menge: ${discountQuantity}',
+                            `Neue Bestellung mit Modus 5 für Produkt ${purchasedItem.number}: Menge: ${discountQuantity}`,
                         );
                         //das muss auch wieder ans Frontend
-                        descriptionString += "Neue Bestellung mit Modus 5 für Produkt ${purchasedItem.number}: Menge: ${discountQuantity}";
-                        orders.push(new OrderDto(
-                            purchasedItem.number,
-                            discountQuantity,
-                            '5',
-                            descriptionString
-                        ));
+                        descriptionString += `Neue Bestellung mit Modus 5 für Produkt ${purchasedItem.number}: Menge: ${discountQuantity}`;
+                        orders.push(new OrderDto(purchasedItem.number, discountQuantity, '5', descriptionString));
                     } else if (orderDay < 0) {
-                        this.logger.log("Neue Eilbestellung mit Modus 4 Produkt ${purchasedItem.number}: Menge: ${discountQuantity}");
-                        descriptionString += "Neue Eilbestellung mit Modus 4 Produkt ${purchasedItem.number}: Menge: ${discountQuantity}";
-                        orders.push(new OrderDto(
-                            purchasedItem.number,
-                            discountQuantity,
-                            '4',
-                            descriptionString
-                        ));
+                        this.logger.log(
+                            `Neue Eilbestellung mit Modus 4 Produkt ${purchasedItem.number}: Menge: ${discountQuantity}`,
+                        );
+                        descriptionString += `Neue Eilbestellung mit Modus 4 Produkt ${purchasedItem.number}: Menge: ${discountQuantity}`;
+                        orders.push(new OrderDto(purchasedItem.number, discountQuantity, '4', descriptionString));
                     }
                 }
             }
             if (orders.length > 1) {
                 let amount: number = 0;
-                orders.forEach(order => {
+                orders.forEach((order) => {
                     amount += order.quantity;
                 });
-                newOrders.push(new OrderDto(
-                    orders[0].article,
-                    amount,
-                    orders[0].modus,
-                    "Mehrere Bestellungen für Kaufteil ${orders[0].article} mit Modus 5 in der gleichen Periode wurden zusammengeführt: Menge: ${amount}"
-                    ));
+                newOrders.push(
+                    new OrderDto(
+                        orders[0].article,
+                        amount,
+                        orders[0].modus,
+                        `Mehrere Bestellungen für Kaufteil ${orders[0].article} mit Modus 5 in der gleichen Periode wurden zusammengeführt: Menge: ${amount}`,
+                    ),
+                );
             } else if (orders.length === 1) {
                 newOrders.push(orders[0]);
             }

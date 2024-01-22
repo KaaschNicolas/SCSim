@@ -12,8 +12,6 @@ export class ProductionProgramController {
 
     @Post()
     upsertProductionProgram(@Body() productionProgramDtoList: ProductionProgramDto[]) {
-        console.log(productionProgramDtoList);
-        console.log(productionProgramDtoList.length);
         return this.productionProgramService.upsertProductionProgram(productionProgramDtoList);
     }
 }
