@@ -41,6 +41,7 @@ export class OrderService {
     public async insert(futureOrderDto: FutureOrderDto[], period: number) {
         await this.orderRepository.clear();
         this.logger.log('Inserting Orders');
+        console.log(period);
         for (let futureOrder of futureOrderDto) {
             let purchasedItem = await this.purchasedItemRepository.findOne({
                 where: {
@@ -50,10 +51,12 @@ export class OrderService {
             if (period === undefined || period === null) {
                 console.log('keine Period gesetzt Alarm');
             }
-            let periodDifference = period + 1 - futureOrder.orderPeriod;
+            console.log(futureOrder.orderPeriod);
+            console.log('futureOrder.orderPeriod: ' + typeof futureOrder.orderPeriod);
+            console.log('period ' + typeof period);
+            let periodDifference = parseInt(period.toString()) + 1 - futureOrder.orderPeriod;
             let maxDeliveryTime = purchasedItem.deliverytime * 5 + purchasedItem.deviation * 5;
             let daysAfterToday = 0;
-            console.log(periodDifference + ' ' + periodDifference + ' ' + maxDeliveryTime);
             if (futureOrder.mode === 4) {
                 daysAfterToday = maxDeliveryTime / 2 - 5 * periodDifference;
             } else if (futureOrder.mode === 5) {
@@ -119,10 +122,18 @@ export class OrderService {
             }
             for (let j = 0; j < 5; j++) {
                 for (let k = i * 5 + j; k < 28; k++) {
-                    purchasedItemDto.stockHistory.set(i, purchasedItemDto.stockHistory.get(k) - amount);
+                    let pi = purchasedItemDto.stockHistory.get(k);
+                    purchasedItemDto.stockHistory.set(k, pi - amount);
+                    //console
+                    //.log
+                    //`pi: ${
+                    //    purchasedItemDto.number
+                    //} updateStockHistoryByForecast: ${purchasedItemDto.stockHistory.get(i)}`,
+                    //();
                 }
             }
         }
+        console.log(purchasedItemDto.stockHistory.size);
     }
 
     public async updateStockHistoryByOrders(purchasedItemDto: PurchasedItemDto) {
@@ -132,6 +143,10 @@ export class OrderService {
             },
         });
 
+        for (let i = 0; i < 28; i++) {
+            purchasedItemDto.stockHistory.set(i, purchasedItemDto.warehouseStock);
+        }
+
         for (let order of orders) {
             if (order.purchasedItem.number == purchasedItemDto.number) {
                 if (order.daysAfterToday < 0) {
@@ -139,9 +154,16 @@ export class OrderService {
                 }
                 for (let i = order.daysAfterToday; i < 28; i++) {
                     purchasedItemDto.stockHistory.set(i, purchasedItemDto.stockHistory.get(i) + order.amount);
+                    //console
+                    //.log
+                    //`pi: ${purchasedItemDto.number} updateStockHistoryByOrders: ${purchasedItemDto.stockHistory.get(
+                    //    i,
+                    //)}`,
+                    //();
                 }
             }
         }
+        console.log(purchasedItemDto.stockHistory.size);
     }
 
     public async createOrders(purchasedItemDtoList: PurchasedItemDto[]) {
@@ -152,12 +174,13 @@ export class OrderService {
             //Ich brauche im OrderDto noch die discountquantity
             let discountQuantity = purchasedItem.discountQuantity; //!!!
             let descriptionString: string;
-            this.logger.log(`Berechne Bestellungen für Produkt: ${purchasedItem.number}`);
+            //this.logger.log(`Berechne Bestellungen für Produkt: ${purchasedItem.number}`);
             let maxDeliveryTime = purchasedItem.deliverytime + purchasedItem.deviation;
-            this.logger.log(`MaxDeliveryTime: ${maxDeliveryTime}`);
+            //this.logger.log(`MaxDeliveryTime: ${maxDeliveryTime}`);
             //Lagerbestandsverlauf?
             for (let i = 0; i < 20; i++) {
-                console.log(purchasedItem.stockHistory.get(i)); //scheint immer undefined zu sein
+                //console.log(purchasedItem);
+                //console.log(purchasedItem.stockHistory.get(i)); //scheint immer undefined zu sein
                 if (
                     purchasedItem.stockHistory.get(i + 1) < 0 &&
                     purchasedItem.stockHistory.get(i + 2) < 0 &&
@@ -167,8 +190,8 @@ export class OrderService {
                     let orderDay = (purchasedItem.deliverytime + purchasedItem.deviation) * 5;
                     this.logger.log(orderDay);
                     if (orderDay < 6) {
-                        this.logger.log('Produkt geht an Tag ${i} aus und wird am Tag ${orderDay} bestellt');
-                        descriptionString = 'Produkt geht an Tag ${i} aus und wird am Tag ${orderDay} bestellt\n';
+                        this.logger.log(`Produkt geht an Tag ${i} aus und wird am Tag ${orderDay} bestellt`);
+                        descriptionString = `Produkt geht an Tag ${i} aus und wird am Tag ${orderDay} bestellt\n`;
                     }
                     //Bestand in OrderHistory aktualisieren für aktualisierten Lagerbestandsverlauf
                     for (let j = i; j < 27; j++) {
