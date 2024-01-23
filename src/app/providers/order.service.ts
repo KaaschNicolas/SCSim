@@ -41,27 +41,27 @@ export class OrderService {
     public async insert(futureOrderDto: FutureOrderDto[], period: number) {
         await this.orderRepository.clear();
         this.logger.log('Inserting Orders');
-        console.log(period);
         for (let futureOrder of futureOrderDto) {
             let purchasedItem = await this.purchasedItemRepository.findOne({
                 where: {
                     number: futureOrder.purchasedItemId,
                 },
             });
+
             if (period === undefined || period === null) {
                 console.log('keine Period gesetzt Alarm');
             }
-            console.log(futureOrder.orderPeriod);
-            console.log('futureOrder.orderPeriod: ' + typeof futureOrder.orderPeriod);
-            console.log('period ' + typeof period);
+
             let periodDifference = parseInt(period.toString()) + 1 - futureOrder.orderPeriod;
             let maxDeliveryTime = purchasedItem.deliverytime * 5 + purchasedItem.deviation * 5;
             let daysAfterToday = 0;
+
             if (futureOrder.mode === 4) {
                 daysAfterToday = maxDeliveryTime / 2 - 5 * periodDifference;
             } else if (futureOrder.mode === 5) {
                 daysAfterToday = maxDeliveryTime - 5 * periodDifference;
             }
+
             await this.orderRepository.save(
                 new Order({
                     purchasedItem: purchasedItem,
@@ -91,25 +91,12 @@ export class OrderService {
             await this.updateStockHistoryByOrders(purchasedItemDto);
 
             await this.updateStockHistoryByForecast(purchasedItemDto);
+            console.log(purchasedItemDto);
         }
 
         let actualOrders = await this.createOrders(purchasedItemDtos);
 
         return actualOrders;
-    }
-
-    private convertPurchasedItemToDto(purchasedItem: PurchasedItem): PurchasedItemDto {
-        return {
-            number: purchasedItem.number,
-            ordertype: purchasedItem.ordertype,
-            warehouseStock: purchasedItem.warehouseStock,
-            costs: purchasedItem.costs,
-            calculatedPurchase: purchasedItem.calculatedPurchase,
-            deliverytime: purchasedItem.deliverytime,
-            deviation: purchasedItem.deviation,
-            discountQuantity: purchasedItem.discountQuantity,
-            stockHistory: new Map<number, number>(),
-        };
     }
 
     public async updateStockHistoryByForecast(purchasedItemDto: PurchasedItemDto) {
@@ -133,7 +120,6 @@ export class OrderService {
                 }
             }
         }
-        console.log(purchasedItemDto.stockHistory.size);
     }
 
     public async updateStockHistoryByOrders(purchasedItemDto: PurchasedItemDto) {
@@ -163,19 +149,17 @@ export class OrderService {
                 }
             }
         }
-        console.log(purchasedItemDto.stockHistory.size);
     }
 
     public async createOrders(purchasedItemDtoList: PurchasedItemDto[]) {
         this.logger.log('createOrders');
         let newOrders = Array<OrderDto>();
         for (const purchasedItem of purchasedItemDtoList) {
-            const orders = Array<OrderDto>();
             //Ich brauche im OrderDto noch die discountquantity
             let discountQuantity = purchasedItem.discountQuantity; //!!!
             let descriptionString: string;
             //this.logger.log(`Berechne Bestellungen für Produkt: ${purchasedItem.number}`);
-            let maxDeliveryTime = purchasedItem.deliverytime + purchasedItem.deviation;
+
             //this.logger.log(`MaxDeliveryTime: ${maxDeliveryTime}`);
             //Lagerbestandsverlauf?
             for (let i = 0; i < 20; i++) {
@@ -187,7 +171,7 @@ export class OrderService {
                     purchasedItem.stockHistory.get(i + 3) < 0 &&
                     purchasedItem.stockHistory.get(i + 4) < 0
                 ) {
-                    let orderDay = (purchasedItem.deliverytime + purchasedItem.deviation) * 5;
+                    let orderDay = i - (purchasedItem.deliverytime + purchasedItem.deviation) * 5;
                     this.logger.log(orderDay);
                     if (orderDay < 6) {
                         this.logger.log(`Produkt geht an Tag ${i} aus und wird am Tag ${orderDay} bestellt`);
@@ -208,16 +192,17 @@ export class OrderService {
                         );
                         //das muss auch wieder ans Frontend
                         descriptionString += `Neue Bestellung mit Modus 5 für Produkt ${purchasedItem.number}: Menge: ${discountQuantity}`;
-                        orders.push(new OrderDto(purchasedItem.number, discountQuantity, '5', descriptionString));
+                        newOrders.push(new OrderDto(purchasedItem.number, discountQuantity, '5', descriptionString));
                     } else if (orderDay < 0) {
                         this.logger.log(
                             `Neue Eilbestellung mit Modus 4 Produkt ${purchasedItem.number}: Menge: ${discountQuantity}`,
                         );
                         descriptionString += `Neue Eilbestellung mit Modus 4 Produkt ${purchasedItem.number}: Menge: ${discountQuantity}`;
-                        orders.push(new OrderDto(purchasedItem.number, discountQuantity, '4', descriptionString));
+                        newOrders.push(new OrderDto(purchasedItem.number, discountQuantity, '4', descriptionString));
                     }
                 }
             }
+            /*
             if (orders.length > 1) {
                 let amount: number = 0;
                 orders.forEach((order) => {
@@ -234,7 +219,21 @@ export class OrderService {
             } else if (orders.length === 1) {
                 newOrders.push(orders[0]);
             }
+            */
         }
         return newOrders;
+    }
+    private convertPurchasedItemToDto(purchasedItem: PurchasedItem): PurchasedItemDto {
+        return {
+            number: purchasedItem.number,
+            ordertype: purchasedItem.ordertype,
+            warehouseStock: purchasedItem.warehouseStock,
+            costs: purchasedItem.costs,
+            calculatedPurchase: purchasedItem.calculatedPurchase,
+            deliverytime: purchasedItem.deliverytime,
+            deviation: purchasedItem.deviation,
+            discountQuantity: purchasedItem.discountQuantity,
+            stockHistory: new Map<number, number>(),
+        };
     }
 }

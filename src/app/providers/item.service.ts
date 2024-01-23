@@ -267,10 +267,7 @@ export class ItemService {
             if (item.productionOrder === 0) {
                 item.productionOrder = parentProdctionOrder;
             }
-            console.log(item.itemNumber);
-            console.log(item.productionOrder);
-            console.log(item.safetyStock);
-            console.log(item.warehouseStock);
+
             item.productionOrder =
                 item.productionOrder + item.safetyStock - waitingListAmount - workInProgress - item.warehouseStock;
 

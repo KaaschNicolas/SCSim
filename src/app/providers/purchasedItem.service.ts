@@ -31,7 +31,7 @@ export class PurchasedItemService {
     }
 
     public async calcNeedsForWeek(purchasedItemDto: PurchasedItemDto) {
-        this.logger.log('calcNeedsForWeek()');
+        this.logger.log(`calcNeedsForWeek() for item ${purchasedItemDto.number} `);
         let purchasedItem = await this.purchasedItemsRepository.findOne({
             where: {
                 number: purchasedItemDto.number,
@@ -65,7 +65,6 @@ export class PurchasedItemService {
                     value += ipi.multiplier * pp.amountP3;
                 }
             }
-            this.logger.log(`value ${value} of purchasedItem ${purchasedItem.number}`);
             needPerWeek.push(value);
         }
         return needPerWeek;
