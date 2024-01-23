@@ -159,7 +159,7 @@ export class OrderService {
             let discountQuantity = purchasedItem.discountQuantity; //!!!
             let descriptionString: string;
             //this.logger.log(`Berechne Bestellungen für Produkt: ${purchasedItem.number}`);
-
+            let orders: Array<OrderDto> = new Array<OrderDto>();
             //this.logger.log(`MaxDeliveryTime: ${maxDeliveryTime}`);
             //Lagerbestandsverlauf?
             for (let i = 0; i < 20; i++) {
@@ -174,8 +174,13 @@ export class OrderService {
                     let orderDay = i - (purchasedItem.deliverytime + purchasedItem.deviation) * 5;
                     this.logger.log(orderDay);
                     if (orderDay < 6) {
-                        this.logger.log(`Produkt geht an Tag ${i} aus und wird am Tag ${orderDay} bestellt`);
-                        descriptionString = `Produkt geht an Tag ${i} aus und wird am Tag ${orderDay} bestellt\n`;
+                        this.logger.log(
+                            `Produkt geht an Tag ${i} aus und wird am Tag ${Math.floor(orderDay)} bestellt`,
+                        );
+
+                        descriptionString = `Produkt geht an Tag ${i < 0 ? 1 : i + 1} aus und wird am Tag ${
+                            orderDay < 1 ? 1 : Math.floor(orderDay) + 1
+                        } bestellt\n`;
                     }
                     //Bestand in OrderHistory aktualisieren für aktualisierten Lagerbestandsverlauf
                     for (let j = i; j < 27; j++) {
@@ -192,7 +197,7 @@ export class OrderService {
                         );
                         //das muss auch wieder ans Frontend
                         descriptionString += `Neue Bestellung mit Modus 5 für Produkt ${purchasedItem.number}: Menge: ${discountQuantity}`;
-                        newOrders.push(new OrderDto(purchasedItem.number, discountQuantity, '5', descriptionString));
+                        orders.push(new OrderDto(purchasedItem.number, discountQuantity, '5', descriptionString));
                     } else if (orderDay < 0) {
                         this.logger.log(
                             `Neue Eilbestellung mit Modus 4 Produkt ${purchasedItem.number}: Menge: ${discountQuantity}`,
@@ -202,7 +207,7 @@ export class OrderService {
                     }
                 }
             }
-            /*
+
             if (orders.length > 1) {
                 let amount: number = 0;
                 orders.forEach((order) => {
@@ -219,10 +224,10 @@ export class OrderService {
             } else if (orders.length === 1) {
                 newOrders.push(orders[0]);
             }
-            */
         }
         return newOrders;
     }
+
     private convertPurchasedItemToDto(purchasedItem: PurchasedItem): PurchasedItemDto {
         return {
             number: purchasedItem.number,
