@@ -241,6 +241,14 @@ export class ItemService {
 
             let workInProgress = await this.waitingListService.getWorkInProgressByItemId(product.itemNumber);
 
+            if (waitingListAmount !== null) {
+                product.waitingQueue = waitingListAmount;
+            }
+
+            if (workInProgress !== null) {
+                product.workInProgress = workInProgress;
+            }
+
             await this.resolveChildren(product, product.productionOrder, product.waitingQueue);
         }
     }
