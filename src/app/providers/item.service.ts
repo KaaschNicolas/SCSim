@@ -237,11 +237,15 @@ export class ItemService {
         //});
 
         for (let product of products) {
-            await this.resolveChildren(product, product.productionOrder);
+            let waitingListAmount = await this.waitingListService.getWaitingListAmountByItemId(product.itemNumber);
+
+            let workInProgress = await this.waitingListService.getWorkInProgressByItemId(product.itemNumber);
+
+            await this.resolveChildren(product, product.productionOrder, product.waitingQueue);
         }
     }
 
-    private async resolveChildren(item: Item, parentProdctionOrder: number) {
+    private async resolveChildren(item: Item, parentProdctionOrder: number, parentWaitingList: number) {
         if (item.itemNumber === 1 || item.itemNumber === 2 || item.itemNumber === 3) {
             let childreen = item.consistsOf;
             for (var i in childreen) {
@@ -256,7 +260,7 @@ export class ItemService {
                 if (child === null || child === undefined) {
                     return;
                 }
-                await this.resolveChildren(child[0], item.productionOrder);
+                await this.resolveChildren(child[0], item.productionOrder, item.waitingQueue);
             }
         } else {
             //TODO checken, ob workInProgress und waitingList richtig verrechnet werden
@@ -267,9 +271,10 @@ export class ItemService {
             if (item.productionOrder === 0) {
                 item.productionOrder = parentProdctionOrder;
             }
-
+            console.log("item.productionOrder = " + item.productionOrder);
             item.productionOrder =
-                item.productionOrder + item.safetyStock - waitingListAmount - workInProgress - item.warehouseStock;
+                item.productionOrder + parentWaitingList + item.safetyStock - waitingListAmount - workInProgress - item.warehouseStock;
+            console.log(`itemId: ${item.itemNumber} Rechnung: ${item.productionOrder} = ${item.safetyStock} - ${waitingListAmount} - ${workInProgress} - ${item.warehouseStock}`);
 
             if (waitingListAmount !== null) {
                 item.waitingQueue = waitingListAmount;
@@ -298,7 +303,7 @@ export class ItemService {
                 if (child === null || child === undefined) {
                     return;
                 }
-                await this.resolveChildren(child[0], item.productionOrder);
+                await this.resolveChildren(child[0], item.productionOrder, item.waitingQueue);
             }
         }
 
