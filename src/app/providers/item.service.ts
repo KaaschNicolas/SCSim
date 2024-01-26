@@ -249,6 +249,11 @@ export class ItemService {
                 product.workInProgress = workInProgress;
             }
 
+            product.productionOrder =
+                product.productionOrder + product.safetyStock - waitingListAmount - workInProgress - product.warehouseStock;
+            
+                await this.entityManager.save(product);
+            
             await this.resolveChildren(product, product.productionOrder, product.waitingQueue);
         }
     }
