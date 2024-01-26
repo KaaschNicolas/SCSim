@@ -282,7 +282,7 @@ export class ItemService {
             console.log("item.productionOrder = " + item.productionOrder);
             item.productionOrder =
                 item.productionOrder + parentWaitingList + item.safetyStock - waitingListAmount - workInProgress - item.warehouseStock;
-            console.log(`itemId: ${item.itemNumber} Rechnung: ${item.productionOrder} = ${item.safetyStock} - ${waitingListAmount} - ${workInProgress} - ${item.warehouseStock}`);
+            console.log(`itemId: ${item.itemNumber} Rechnung: ${item.productionOrder} = ${parentWaitingList} + ${item.safetyStock} - ${waitingListAmount} - ${workInProgress} - ${item.warehouseStock}`);
 
             if (waitingListAmount !== null) {
                 item.waitingQueue = waitingListAmount;
