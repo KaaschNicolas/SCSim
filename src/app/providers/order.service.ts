@@ -203,7 +203,7 @@ export class OrderService {
                             `Neue Eilbestellung mit Modus 4 Produkt ${purchasedItem.number}: Menge: ${discountQuantity}`,
                         );
                         descriptionString += `Neue Eilbestellung mit Modus 4 Produkt ${purchasedItem.number}: Menge: ${discountQuantity}`;
-                        newOrders.push(new OrderDto(purchasedItem.number, discountQuantity, '4', descriptionString));
+                        orders.push(new OrderDto(purchasedItem.number, discountQuantity, '4', descriptionString));
                     }
                 }
             }
@@ -218,7 +218,7 @@ export class OrderService {
                         orders[0].article,
                         amount,
                         orders[0].modus,
-                        `Mehrere Bestellungen für Kaufteil ${orders[0].article} mit Modus 5 in der gleichen Periode wurden zusammengeführt: Menge: ${amount}`,
+                        `Mehrere Bestellungen für Kaufteil ${orders[0].article} mit ${orders[0].modus} in der gleichen Periode wurden zusammengeführt: Menge: ${amount}`,
                     ),
                 );
             } else if (orders.length === 1) {
