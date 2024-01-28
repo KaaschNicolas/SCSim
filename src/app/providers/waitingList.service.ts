@@ -21,11 +21,12 @@ export class WaitingListService {
             switch (it.itemId) {
                 case 26:
                     let waitingListAmount26 = it.amount / 3;
+                    let timeNeedAmount26 = it.timeNeed / 3;
                     let waitingListDto261: WaitingListDto = {
                         itemId: 261,
                         workingStationId: it.workingStationId,
                         amount: waitingListAmount26,
-                        timeNeed: it.timeNeed,
+                        timeNeed: timeNeedAmount26,
                         isInWork: it.isInWork,
                     };
                     let waitingList261 = new WaitingList(waitingListDto261);
@@ -35,7 +36,7 @@ export class WaitingListService {
                         itemId: 262,
                         workingStationId: it.workingStationId,
                         amount: waitingListAmount26,
-                        timeNeed: it.timeNeed,
+                        timeNeed: timeNeedAmount26,
                         isInWork: it.isInWork,
                     };
                     let waitingList262 = new WaitingList(waitingListDto262);
@@ -45,7 +46,7 @@ export class WaitingListService {
                         itemId: 263,
                         workingStationId: it.workingStationId,
                         amount: waitingListAmount26,
-                        timeNeed: it.timeNeed,
+                        timeNeed: timeNeedAmount26,
                         isInWork: it.isInWork,
                     };
                     let waitingList263 = new WaitingList(waitingListDto263);
@@ -54,11 +55,12 @@ export class WaitingListService {
                     break;
                 case 16:
                     let waitingListAmount16 = it.amount / 3;
+                    let timeNeedAmount16 = it.timeNeed / 3;
                     let waitingListDto161: WaitingListDto = {
                         itemId: 161,
                         workingStationId: it.workingStationId,
                         amount: waitingListAmount16,
-                        timeNeed: it.timeNeed,
+                        timeNeed: timeNeedAmount16,
                         isInWork: it.isInWork,
                     };
                     let waitingList161 = new WaitingList(waitingListDto161);
@@ -68,7 +70,7 @@ export class WaitingListService {
                         itemId: 162,
                         workingStationId: it.workingStationId,
                         amount: waitingListAmount16,
-                        timeNeed: it.timeNeed,
+                        timeNeed: timeNeedAmount16,
                         isInWork: it.isInWork,
                     };
                     let waitingList162 = new WaitingList(waitingListDto162);
@@ -78,7 +80,7 @@ export class WaitingListService {
                         itemId: 163,
                         workingStationId: it.workingStationId,
                         amount: waitingListAmount16,
-                        timeNeed: it.timeNeed,
+                        timeNeed: timeNeedAmount16,
                         isInWork: it.isInWork,
                     };
                     let waitingList163 = new WaitingList(waitingListDto163);
@@ -86,11 +88,12 @@ export class WaitingListService {
                     break;
                 case 17:
                     let waitingListAmount17 = it.amount / 3;
+                    let timeNeedAmount17 = it.timeNeed / 3;
                     let waitingListDto171: WaitingListDto = {
                         itemId: 171,
                         workingStationId: it.workingStationId,
                         amount: waitingListAmount17,
-                        timeNeed: it.timeNeed,
+                        timeNeed: timeNeedAmount17,
                         isInWork: it.isInWork,
                     };
                     let waitingList171 = new WaitingList(waitingListDto171);
@@ -100,7 +103,7 @@ export class WaitingListService {
                         itemId: 172,
                         workingStationId: it.workingStationId,
                         amount: waitingListAmount17,
-                        timeNeed: it.timeNeed,
+                        timeNeed: timeNeedAmount17,
                         isInWork: it.isInWork,
                     };
                     let waitingList172 = new WaitingList(waitingListDto172);
@@ -110,7 +113,7 @@ export class WaitingListService {
                         itemId: 173,
                         workingStationId: it.workingStationId,
                         amount: waitingListAmount17,
-                        timeNeed: it.timeNeed,
+                        timeNeed: timeNeedAmount17,
                         isInWork: it.isInWork,
                     };
                     let waitingList173 = new WaitingList(waitingListDto173);

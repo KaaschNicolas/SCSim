@@ -200,6 +200,8 @@ export class ItemService {
             itemDto.productionOrder = itemDto.productionOrder + item.productionOrder;
             itemDto.warehouseStock = itemDto.warehouseStock + item.warehouseStock;
             itemDto.safetyStock = itemDto.safetyStock + item.safetyStock;
+            itemDto.waitingQueue = itemDto.waitingQueue + item.waitingQueue;
+            itemDto.workInProgress = itemDto.workInProgress + item.workInProgress;
         } else {
             itemDtoList.push(
                 new ItemDto(
