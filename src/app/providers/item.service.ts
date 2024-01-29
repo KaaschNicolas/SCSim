@@ -23,7 +23,6 @@ export class ItemService {
         for (let it of itemDtoList) {
             let item = new Item(it);
             await this.entityManager.save(item);
-            break;
         }
     }
 
@@ -68,6 +67,7 @@ export class ItemService {
                             item.productionOrder,
                             item.waitingQueue,
                             item.workInProgress,
+                            item.description,
                         ),
                     );
                     break;
@@ -93,6 +93,7 @@ export class ItemService {
                     item.productionOrder,
                     item.waitingQueue,
                     item.workInProgress,
+                    item.description,
                 ),
             );
         }
@@ -119,7 +120,7 @@ export class ItemService {
             let waitingListAmount = await this.waitingListService.getWaitingListAmountByItemId(product.itemNumber);
 
             let workInProgress = await this.waitingListService.getWorkInProgressByItemId(product.itemNumber);
-
+            let productionsProgram = product.productionOrder;
             if (waitingListAmount !== null) {
                 product.waitingQueue = waitingListAmount;
             }
@@ -135,6 +136,7 @@ export class ItemService {
                 workInProgress -
                 product.warehouseStock;
 
+            product.description = `Teilnummer: ${product.itemNumber} Rechnung: Produktionsprogramm(${product.productionOrder}) = Produktionsauftrag(${productionsProgram}) + Sicherheitsbestand(${product.safetyStock}) - In Warteschlange(${waitingListAmount}) - In Arbeit(${workInProgress}) - Warenbestand(${product.warehouseStock})`;
             await this.entityManager.save(product);
         }
 
@@ -193,29 +195,34 @@ export class ItemService {
                     itemP51[0].productionOrder +
                     itemP56[0].productionOrder +
                     itemP31[0].productionOrder +
-                    item.safetyStock -
+                    item.safetyStock +
                     waitingListP51 +
                     waitingListP56 +
-                    waitingListP31 +
+                    waitingListP31 -
                     workInProgress -
                     waitingListAmount -
                     item.warehouseStock;
 
-                let childreen = item.consistsOf;
-                for (var i in childreen) {
-                    if (i === null || i === undefined) {
-                        return;
-                    }
-                    let child = await this.itemRepository.find({
-                        relations: { consistsOf: true },
-                        where: { itemNumber: childreen[i].itemNumber },
-                    });
+                item.description = `Teilnummer: ${item.itemNumber} Rechnung: Produktionsauftrag(${item.productionOrder}) = Produktionsauftrag E51(${itemP51[0].productionOrder}) + Produktionsauftrag E56(${itemP56[0].productionOrder}) + Produktionsauftrag E31(${itemP31[0].productionOrder}) + Sicherheitsbestand(${item.safetyStock}) + Warteschange E51(${waitingListP51}) + Warteschange E56(${waitingListP56}) + Warteschange E31(${waitingListP31}) - In Arbeit(${workInProgress}) - In Warteschange(${waitingListAmount}) - Warenbestand(${item.warehouseStock})`;
+                console.log(item.description);
 
-                    if (child === null || child === undefined) {
-                        return;
-                    }
-                    await this.resolveChildren(child[0], item.productionOrder, item.waitingQueue);
+                await this.entityManager.save(item);
+            }
+
+            let childreen = item.consistsOf;
+            for (var i in childreen) {
+                if (i === null || i === undefined) {
+                    return;
                 }
+                let child = await this.itemRepository.find({
+                    relations: { consistsOf: true },
+                    where: { itemNumber: childreen[i].itemNumber },
+                });
+
+                if (child === null || child === undefined) {
+                    return;
+                }
+                await this.resolveChildren(child[0], item.productionOrder, item.waitingQueue);
             }
         } else if (item.itemNumber === 26) {
             if (item.productionOrder === 0) {
@@ -250,14 +257,20 @@ export class ItemService {
                     itemP1[0].productionOrder +
                     itemP2[0].productionOrder +
                     itemP3[0].productionOrder +
-                    item.safetyStock -
+                    item.safetyStock +
                     waitingListP1 +
                     waitingListP2 +
-                    waitingListP3 +
+                    waitingListP3 -
                     workInProgress -
                     waitingListAmount -
                     item.warehouseStock;
+
+                item.description = `Teilnummer: ${item.itemNumber} Rechnung: Produktionsauftrag(${item.productionOrder}) = Produktionsauftrag P3(${itemP3[0].productionOrder}) + Produktionsauftrag P2(${itemP2[0].productionOrder}) + Produktionsauftrag P3(${itemP3[0].productionOrder}) + Sicherheitsbestand(${item.safetyStock}) + Warteschange P1(${waitingListP1}) + Warteschange P2(${waitingListP2}) + Warteschange P3(${waitingListP3}) - In Arbeit(${workInProgress}) - In Warteschange(${waitingListAmount}) - Warenbestand(${item.warehouseStock})`;
+                console.log(item.description);
             }
+
+            await this.entityManager.save(item);
+
             let childreen = item.consistsOf;
             for (var i in childreen) {
                 if (i === null || i === undefined) {
@@ -290,9 +303,9 @@ export class ItemService {
                 waitingListAmount -
                 workInProgress -
                 item.warehouseStock;
-            console.log(
-                `itemId: ${item.itemNumber} Rechnung: ${item.productionOrder} = ${parentWaitingList} + ${item.safetyStock} - ${waitingListAmount} - ${workInProgress} - ${item.warehouseStock}`,
-            );
+
+            item.description = `Teilnummer: ${item.itemNumber} Rechnung: Produktionsauftrag(${item.productionOrder}) = Produktionsauftrag aus Vorgänger(${parentProdctionOrder}) + Warteschlange aus Vorgänger(${parentWaitingList}) + Sicherheitsbestand(${item.safetyStock}) - In Warteschlange(${waitingListAmount}) - In Arbeit(${workInProgress}) - Warenbestand(${item.warehouseStock})`;
+            console.log(item.description);
 
             if (waitingListAmount !== null) {
                 item.waitingQueue = waitingListAmount;

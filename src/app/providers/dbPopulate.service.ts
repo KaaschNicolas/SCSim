@@ -115,6 +115,7 @@ export class DbPopulateService {
                     workInProgress: 0,
                     productionOrder: 0,
                     isMultiple: false,
+                    description: '',
                 }),
             );
         }
