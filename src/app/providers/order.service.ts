@@ -155,17 +155,12 @@ export class OrderService {
         this.logger.log('createOrders');
         let newOrders = Array<OrderDto>();
         for (const purchasedItem of purchasedItemDtoList) {
-            //Ich brauche im OrderDto noch die discountquantity
-            let discountQuantity = purchasedItem.discountQuantity; //!!!
+            let discountQuantity = purchasedItem.discountQuantity;
             let descriptionString: string;
-            //this.logger.log(`Berechne Bestellungen für Produkt: ${purchasedItem.number}`);
             let normalOrders: Array<OrderDto> = new Array<OrderDto>();
             let fastOrders: Array<OrderDto> = new Array<OrderDto>();
-            //this.logger.log(`MaxDeliveryTime: ${maxDeliveryTime}`);
-            //Lagerbestandsverlauf?
+            let flag = false;
             for (let i = 0; i < 20; i++) {
-                //console.log(purchasedItem);
-                //console.log(purchasedItem.stockHistory.get(i)); //scheint immer undefined zu sein
                 if (
                     purchasedItem.stockHistory.get(i + 1) < 0 &&
                     purchasedItem.stockHistory.get(i + 2) < 0 &&
@@ -188,7 +183,7 @@ export class OrderService {
                             descriptionString += ` ${purchasedItem.stockHistory.get(y)}`;
                         }
                     }
-                    descriptionString += `\nMaximale Lieferdauer: ${(purchasedItem.deliverytime + purchasedItem.deviation) * 5}\n`;
+                    descriptionString += `\nMaximale Lieferdauer: ${Math.ceil((purchasedItem.deliverytime + purchasedItem.deviation) * 5)}\n`;
                     if (orderDay < 6) {
                         this.logger.log(
                             `Kaufteil geht an Tag ${i} aus und in dieser Periode bestellt`,
@@ -197,7 +192,13 @@ export class OrderService {
                         descriptionString += `\nKaufteil geht an Tag ${i} aus und wird in dieser Periode bestellt`;
                     }
                     //Bestand in OrderHistory aktualisieren für aktualisierten Lagerbestandsverlauf
-                    for (let j = i; j < 27; j++) {
+                    let updateIterator: number = 0;
+                    if (orderDay < 0) {
+                        updateIterator = Math.ceil(((purchasedItem.deliverytime + purchasedItem.deviation) * 5)/2);
+                    } else {
+                        updateIterator = Math.ceil((purchasedItem.deliverytime + purchasedItem.deviation) * 5);
+                    }
+                    for (let j = updateIterator; j < 27; j++) {
                         let newStock = purchasedItem.stockHistory.get(j) + discountQuantity;
                         purchasedItem.stockHistory.set(j, newStock);
                         if (j == 26) {
@@ -224,14 +225,19 @@ export class OrderService {
                             `\nNeue normale Bestellung für Kaufteil ${purchasedItem.number}: Menge: ${discountQuantity}`,
                         );
                         //das muss auch wieder ans Frontend
-                        descriptionString += `Neue normale Bestellung für Kaufteil ${purchasedItem.number}: Menge: ${discountQuantity} `;
+                        descriptionString += ` Neue normale Bestellung für Kaufteil ${purchasedItem.number}: Menge: ${discountQuantity} `;
                         normalOrders.push(new OrderDto(purchasedItem.number, discountQuantity, '5', descriptionString));
                     } else if (orderDay < 0) {
+                        flag = true;
                         this.logger.log(
                             `Neue Eilbestellung mit Modus 4 Kaufteil ${purchasedItem.number}: Menge: ${discountQuantity}`,
                         );
                         descriptionString += `Neue Eilbestellung für Kaufteil ${purchasedItem.number}: Menge: ${discountQuantity} `;
                         fastOrders.push(new OrderDto(purchasedItem.number, discountQuantity, '4', descriptionString));
+                    }
+                    if (flag === true) {
+                        i = Math.ceil(((purchasedItem.deliverytime + purchasedItem.deviation) * 5)/2);
+                        flag = false;
                     }
                 }
             }
