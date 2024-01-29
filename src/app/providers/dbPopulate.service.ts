@@ -102,8 +102,8 @@ export class DbPopulateService {
 
     public async fillItems() {
         const itemNumbers = [
-            1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 161, 162, 163, 171, 172, 173, 18, 19, 20, 261, 262, 263,
-            29, 30, 31, 49, 50, 51, 54, 55, 56,
+            1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 26, 29, 30, 31, 49, 50, 51, 54, 55,
+            56,
         ];
         for (const itemNumber of itemNumbers) {
             await this.itemRepository.save(
@@ -119,16 +119,16 @@ export class DbPopulateService {
             );
         }
         try {
-            await this.updateItemConsistsOf(1, [261, 51]);
-            await this.updateItemConsistsOf(51, [161, 171, 50]);
+            await this.updateItemConsistsOf(1, [26, 51]);
+            await this.updateItemConsistsOf(51, [16, 17, 50]);
             await this.updateItemConsistsOf(50, [4, 10, 49]);
             await this.updateItemConsistsOf(49, [7, 13, 18]);
-            await this.updateItemConsistsOf(2, [262, 56]);
-            await this.updateItemConsistsOf(56, [162, 172, 55]);
+            await this.updateItemConsistsOf(2, [26, 56]);
+            await this.updateItemConsistsOf(56, [16, 12, 55]);
             await this.updateItemConsistsOf(55, [5, 11, 54]);
             await this.updateItemConsistsOf(54, [8, 14, 19]);
-            await this.updateItemConsistsOf(3, [263, 31]);
-            await this.updateItemConsistsOf(31, [163, 173, 30]);
+            await this.updateItemConsistsOf(3, [26, 31]);
+            await this.updateItemConsistsOf(31, [16, 17, 30]);
             await this.updateItemConsistsOf(30, [6, 12, 29]);
             await this.updateItemConsistsOf(29, [9, 15, 20]);
         } catch (error) {
