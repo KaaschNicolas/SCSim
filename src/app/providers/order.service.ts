@@ -111,7 +111,7 @@ export class OrderService {
                 for (let k = i * 5 + j; k < 28; k++) {
                     let pi = purchasedItemDto.stockHistory.get(k);
                     purchasedItemDto.stockHistory.set(k, pi - amount);
-                    //console
+                                        //console
                     //.log
                     //`pi: ${
                     //    purchasedItemDto.number
@@ -159,7 +159,8 @@ export class OrderService {
             let discountQuantity = purchasedItem.discountQuantity; //!!!
             let descriptionString: string;
             //this.logger.log(`Berechne Bestellungen für Produkt: ${purchasedItem.number}`);
-            let orders: Array<OrderDto> = new Array<OrderDto>();
+            let normalOrders: Array<OrderDto> = new Array<OrderDto>();
+            let fastOrders: Array<OrderDto> = new Array<OrderDto>();
             //this.logger.log(`MaxDeliveryTime: ${maxDeliveryTime}`);
             //Lagerbestandsverlauf?
             for (let i = 0; i < 20; i++) {
@@ -173,56 +174,106 @@ export class OrderService {
                 ) {
                     let orderDay = i - (purchasedItem.deliverytime + purchasedItem.deviation) * 5;
                     this.logger.log(orderDay);
+                    descriptionString = "Alter Lagerbestandsverlauf:";
+                    for (let y = 0; y < 20; ++y) {
+                        if (
+                            purchasedItem.stockHistory.get(y + 1) < 0 &&
+                            purchasedItem.stockHistory.get(y + 2) < 0 &&
+                            purchasedItem.stockHistory.get(y + 3) < 0 &&
+                            purchasedItem.stockHistory.get(y + 4) < 0
+                        ) {
+                            descriptionString += ` 0 `;
+                            break;
+                        } else {
+                            descriptionString += ` ${purchasedItem.stockHistory.get(y)}`;
+                        }
+                    }
+                    descriptionString += `\nMaximale Lieferdauer: ${(purchasedItem.deliverytime + purchasedItem.deviation) * 5}\n`;
                     if (orderDay < 6) {
                         this.logger.log(
-                            `Produkt geht an Tag ${i} aus und wird am Tag ${Math.floor(orderDay)} bestellt`,
+                            `Kaufteil geht an Tag ${i} aus und in dieser Periode bestellt`,
                         );
 
-                        descriptionString = `Produkt geht an Tag ${i < 0 ? 1 : i + 1} aus und wird am Tag ${
-                            orderDay < 1 ? 1 : Math.floor(orderDay) + 1
-                        } bestellt\n`;
+                        descriptionString += `\nKaufteil geht an Tag ${i} aus und wird in dieser Periode bestellt`;
                     }
                     //Bestand in OrderHistory aktualisieren für aktualisierten Lagerbestandsverlauf
                     for (let j = i; j < 27; j++) {
                         let newStock = purchasedItem.stockHistory.get(j) + discountQuantity;
                         purchasedItem.stockHistory.set(j, newStock);
                         if (j == 26) {
-                            this.logger.log(`Neuer Lagerbestand: ${purchasedItem.stockHistory.get(26)}`);
+                            this.logger.log(`\nNeuer Lagerbestand: ${purchasedItem.stockHistory.get(26)}`);
+                        }
+                    }
+                    descriptionString += "\nNeuer Lagerbestandsverlauf:";
+                    for (let y = 0; y < 20; ++y) {
+                        if (
+                            purchasedItem.stockHistory.get(y + 1) < 0 &&
+                            purchasedItem.stockHistory.get(y + 2) < 0 &&
+                            purchasedItem.stockHistory.get(y + 3) < 0 &&
+                            purchasedItem.stockHistory.get(y + 4) < 0
+                        ){
+                            descriptionString += ` 0 `;
+                            break;
+                        } else {
+                            descriptionString += ` ${purchasedItem.stockHistory.get(y)}`;
                         }
                     }
 
                     if (orderDay >= 0 && orderDay < 5) {
                         this.logger.log(
-                            `Neue Bestellung mit Modus 5 für Produkt ${purchasedItem.number}: Menge: ${discountQuantity}`,
+                            `\nNeue normale Bestellung für Kaufteil ${purchasedItem.number}: Menge: ${discountQuantity}`,
                         );
                         //das muss auch wieder ans Frontend
-                        descriptionString += `Neue Bestellung mit Modus 5 für Produkt ${purchasedItem.number}: Menge: ${discountQuantity}`;
-                        orders.push(new OrderDto(purchasedItem.number, discountQuantity, '5', descriptionString));
+                        descriptionString += `Neue normale Bestellung für Kaufteil ${purchasedItem.number}: Menge: ${discountQuantity} `;
+                        normalOrders.push(new OrderDto(purchasedItem.number, discountQuantity, '5', descriptionString));
                     } else if (orderDay < 0) {
                         this.logger.log(
-                            `Neue Eilbestellung mit Modus 4 Produkt ${purchasedItem.number}: Menge: ${discountQuantity}`,
+                            `Neue Eilbestellung mit Modus 4 Kaufteil ${purchasedItem.number}: Menge: ${discountQuantity}`,
                         );
-                        descriptionString += `Neue Eilbestellung mit Modus 4 Produkt ${purchasedItem.number}: Menge: ${discountQuantity}`;
-                        orders.push(new OrderDto(purchasedItem.number, discountQuantity, '4', descriptionString));
+                        descriptionString += `Neue Eilbestellung für Kaufteil ${purchasedItem.number}: Menge: ${discountQuantity} `;
+                        fastOrders.push(new OrderDto(purchasedItem.number, discountQuantity, '4', descriptionString));
                     }
                 }
             }
 
-            if (orders.length > 1) {
+            if (normalOrders.length > 1) {
+                descriptionString = "";
                 let amount: number = 0;
-                orders.forEach((order) => {
+                normalOrders.forEach((order) => {
                     amount += order.quantity;
+                    descriptionString += order.description
                 });
+                descriptionString += `Mehrere normale Bestellungen für Kaufteil ${normalOrders[0].article} mit ${normalOrders[0].modus} in der gleichen Periode wurden zusammengeführt: Menge: ${amount}`;
                 newOrders.push(
                     new OrderDto(
-                        orders[0].article,
+                        normalOrders[0].article,
                         amount,
-                        orders[0].modus,
-                        `Mehrere Bestellungen für Kaufteil ${orders[0].article} mit ${orders[0].modus} in der gleichen Periode wurden zusammengeführt: Menge: ${amount}`,
+                        normalOrders[0].modus,
+                        descriptionString,
                     ),
                 );
-            } else if (orders.length === 1) {
-                newOrders.push(orders[0]);
+            } else if (normalOrders.length === 1) {
+                newOrders.push(normalOrders[0]);
+            }
+
+            if (fastOrders.length > 1) {
+                descriptionString = "";
+                let amount: number = 0;
+                fastOrders.forEach((order) => {
+                    amount += order.quantity;
+                    descriptionString += order.description
+                });
+                descriptionString += `Mehrere  Eilbestellungen für Kaufteil ${fastOrders[0].article} mit ${fastOrders[0].modus} in der gleichen Periode wurden zusammengeführt: Menge: ${amount}`;
+                newOrders.push(
+                    new OrderDto(
+                        fastOrders[0].article,
+                        amount,
+                        fastOrders[0].modus,
+                        descriptionString,
+                    ),
+                );
+            } else if (fastOrders.length === 1) {
+                newOrders.push(fastOrders[0]);
             }
         }
         return newOrders;
