@@ -102,8 +102,8 @@ export class DbPopulateService {
 
     public async fillItems() {
         const itemNumbers = [
-            1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 161, 162, 163, 171, 172, 173, 18, 19, 20, 261, 262, 263,
-            29, 30, 31, 49, 50, 51, 54, 55, 56,
+            1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 26, 29, 30, 31, 49, 50, 51, 54, 55,
+            56,
         ];
         for (const itemNumber of itemNumbers) {
             await this.itemRepository.save(
@@ -115,20 +115,21 @@ export class DbPopulateService {
                     workInProgress: 0,
                     productionOrder: 0,
                     isMultiple: false,
+                    description: '',
                 }),
             );
         }
         try {
-            await this.updateItemConsistsOf(1, [261, 51]);
-            await this.updateItemConsistsOf(51, [161, 171, 50]);
+            await this.updateItemConsistsOf(1, [26, 51]);
+            await this.updateItemConsistsOf(51, [16, 17, 50]);
             await this.updateItemConsistsOf(50, [4, 10, 49]);
             await this.updateItemConsistsOf(49, [7, 13, 18]);
-            await this.updateItemConsistsOf(2, [262, 56]);
-            await this.updateItemConsistsOf(56, [162, 172, 55]);
+            await this.updateItemConsistsOf(2, [26, 56]);
+            await this.updateItemConsistsOf(56, [16, 12, 55]);
             await this.updateItemConsistsOf(55, [5, 11, 54]);
             await this.updateItemConsistsOf(54, [8, 14, 19]);
-            await this.updateItemConsistsOf(3, [263, 31]);
-            await this.updateItemConsistsOf(31, [163, 173, 30]);
+            await this.updateItemConsistsOf(3, [26, 31]);
+            await this.updateItemConsistsOf(31, [16, 17, 30]);
             await this.updateItemConsistsOf(30, [6, 12, 29]);
             await this.updateItemConsistsOf(29, [9, 15, 20]);
         } catch (error) {
@@ -177,11 +178,11 @@ export class DbPopulateService {
                 //E49/6
                 [[49, 1, 6, 20]],
                 //E17/7
-                [[171, 15, 3, 15]],
+                [[17, 15, 3, 15]],
                 //E16/8
                 [
-                    [161, 14, 3, 0],
-                    [161, 6, 2, 15],
+                    [16, 14, 3, 0],
+                    [16, 6, 2, 15],
                 ],
                 //E50/9
                 [[50, 2, 5, 30]],
@@ -189,8 +190,8 @@ export class DbPopulateService {
                 [[51, 3, 5, 20]],
                 //E26/11
                 [
-                    [261, 15, 3, 15],
-                    [261, 7, 2, 30],
+                    [26, 15, 3, 15],
+                    [26, 7, 2, 30],
                 ],
                 //P1/12
                 [[1, 4, 6, 30]],
@@ -233,21 +234,21 @@ export class DbPopulateService {
                     [11, 13, 2, 0],
                 ],
                 //E17/7
-                [[172, 15, 3, 15]],
+                //[[172, 15, 3, 15]],
                 //E16/8
-                [
-                    [162, 14, 3, 0],
-                    [162, 6, 2, 15],
-                ],
+                //[
+                //    [162, 14, 3, 0],
+                //    [162, 6, 2, 15],
+                //],
                 //E55/9
                 [[55, 2, 5, 30]],
                 //E56/10
                 [[56, 3, 6, 20]],
                 //E26/11
-                [
-                    [262, 15, 3, 15],
-                    [262, 7, 2, 30],
-                ],
+                //[
+                //    [262, 15, 3, 15],
+                //    [262, 7, 2, 30],
+                //],
                 //P2/12
                 [[2, 4, 7, 20]],
             ],
@@ -289,21 +290,21 @@ export class DbPopulateService {
                     [12, 13, 2, 0],
                 ],
                 //E17/7/productionStep
-                [[173, 15, 3, 15]],
+                //[[173, 15, 3, 15]],
                 //E16/8/productionStep
-                [
-                    [163, 14, 3, 0],
-                    [163, 6, 2, 15],
-                ],
+                //[
+                //    [163, 14, 3, 0],
+                //    [163, 6, 2, 15],
+                //],
                 //E30/9/productionStep
                 [[30, 2, 5, 20]],
                 //E31/10/productionStep
                 [[31, 3, 6, 20]],
                 //E26/11/productionStep
-                [
-                    [263, 15, 3, 15],
-                    [263, 7, 2, 30],
-                ],
+                //[
+                //    [263, 15, 3, 15],
+                //    [263, 7, 2, 30],
+                //],
                 //P3/12/productionStep
                 [[3, 4, 7, 30]],
             ],

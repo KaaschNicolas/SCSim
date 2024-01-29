@@ -14,6 +14,8 @@ export class ItemDto {
 
     public productionOrder?: number;
 
+    public description?: string;
+
     public isMultiple?: boolean;
 
     public toItem(): Item {
@@ -39,12 +41,14 @@ export class ItemDto {
         productionOrder: number,
         waitingQueue: number,
         workInProgress: number,
+        description: string,
     ) {
         (this.itemNumber = itemNumber),
             (this.safetyStock = safteyStock),
             (this.warehouseStock = warehouseStock),
             (this.waitingQueue = waitingQueue),
             (this.productionOrder = productionOrder),
+            (this.description = description),
             (this.workInProgress = workInProgress);
     }
 }

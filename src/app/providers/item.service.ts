@@ -21,128 +21,9 @@ export class ItemService {
     public async upsertItems(itemDtoList: ItemDto[]) {
         this.logger.log('Upserting Items');
         for (let it of itemDtoList) {
-            switch (it.itemNumber) {
-                case 26:
-                    if (it.productionOrder > 0) {
-                        await this.itemRepository.save({
-                            itemNumber: 261,
-                            safetyStock: it.safetyStock / 3,
-                            warehouseStock: it.warehouseStock / 3,
-                            productionOrder: it.productionOrder / 3,
-                        });
-                        await this.itemRepository.save({
-                            itemNumber: 262,
-                            safetyStock: it.safetyStock / 3,
-                            warehouseStock: it.warehouseStock / 3,
-                            productionOrder: it.productionOrder / 3,
-                        });
-                        await this.itemRepository.save({
-                            itemNumber: 263,
-                            safetyStock: it.safetyStock / 3,
-                            warehouseStock: it.warehouseStock / 3,
-                            productionOrder: it.productionOrder / 3,
-                        });
-                    } else {
-                        await this.itemRepository.save({
-                            itemNumber: 261,
-                            safetyStock: it.safetyStock / 3,
-                            warehouseStock: it.warehouseStock / 3,
-                        });
-                        await this.itemRepository.save({
-                            itemNumber: 262,
-                            safetyStock: it.safetyStock / 3,
-                            warehouseStock: it.warehouseStock / 3,
-                        });
-                        await this.itemRepository.save({
-                            itemNumber: 263,
-                            safetyStock: it.safetyStock / 3,
-                            warehouseStock: it.warehouseStock / 3,
-                        });
-                    }
-                    break;
-                case 16:
-                    if (it.productionOrder > 0) {
-                        await this.itemRepository.save({
-                            itemNumber: 161,
-                            safetyStock: it.safetyStock / 3,
-                            warehouseStock: it.warehouseStock / 3,
-                            productionOrder: it.productionOrder / 3,
-                        });
-                        await this.itemRepository.save({
-                            itemNumber: 162,
-                            safetyStock: it.safetyStock / 3,
-                            warehouseStock: it.warehouseStock / 3,
-                            productionOrder: it.productionOrder / 3,
-                        });
-                        await this.itemRepository.save({
-                            itemNumber: 163,
-                            safetyStock: it.safetyStock / 3,
-                            warehouseStock: it.warehouseStock / 3,
-                            productionOrder: it.productionOrder / 3,
-                        });
-                    } else {
-                        await this.itemRepository.save({
-                            itemNumber: 161,
-                            safetyStock: it.safetyStock / 3,
-                            warehouseStock: it.warehouseStock / 3,
-                        });
-                        await this.itemRepository.save({
-                            itemNumber: 162,
-                            safetyStock: it.safetyStock / 3,
-                            warehouseStock: it.warehouseStock / 3,
-                        });
-                        await this.itemRepository.save({
-                            itemNumber: 163,
-                            safetyStock: it.safetyStock / 3,
-                            warehouseStock: it.warehouseStock / 3,
-                        });
-                        break;
-                    }
-                case 17:
-                    if (it.productionOrder > 0) {
-                        await this.itemRepository.save({
-                            itemNumber: 171,
-                            safetyStock: it.safetyStock / 3,
-                            warehouseStock: it.warehouseStock / 3,
-                            productionOrder: it.productionOrder / 3,
-                        });
-                        await this.itemRepository.save({
-                            itemNumber: 172,
-                            safetyStock: it.safetyStock / 3,
-                            warehouseStock: it.warehouseStock / 3,
-                            productionOrder: it.productionOrder / 3,
-                        });
-                        await this.itemRepository.save({
-                            itemNumber: 173,
-                            safetyStock: it.safetyStock / 3,
-                            warehouseStock: it.warehouseStock / 3,
-                            productionOrder: it.productionOrder / 3,
-                        });
-                    } else {
-                        await this.itemRepository.save({
-                            itemNumber: 171,
-                            safetyStock: it.safetyStock / 3,
-                            warehouseStock: it.warehouseStock / 3,
-                        });
-                        await this.itemRepository.save({
-                            itemNumber: 172,
-                            safetyStock: it.safetyStock / 3,
-                            warehouseStock: it.warehouseStock / 3,
-                        });
-                        await this.itemRepository.save({
-                            itemNumber: 173,
-                            safetyStock: it.safetyStock / 3,
-                            warehouseStock: it.warehouseStock / 3,
-                        });
-                    }
-                    break;
-                default:
-                    let item = new Item(it);
-                    await this.entityManager.save(item);
-                    break;
-            }
+            let item = new Item(it);
+            await this.entityManager.save(item);
         }
-        itemDtoList.forEach(async (it) => {});
     }
 
     public async getAll() {
@@ -186,6 +67,7 @@ export class ItemService {
                             item.productionOrder,
                             item.waitingQueue,
                             item.workInProgress,
+                            item.description,
                         ),
                     );
                     break;
@@ -211,6 +93,7 @@ export class ItemService {
                     item.productionOrder,
                     item.waitingQueue,
                     item.workInProgress,
+                    item.description,
                 ),
             );
         }
@@ -233,16 +116,11 @@ export class ItemService {
             relations: { consistsOf: true },
         });
 
-        //productionOrder for p1, p2, p3 must be prefilled (forecast)
-        //products.forEach(async (item) => {
-        //    await this.resolveChildren(item, item.productionOrder);
-        //});
-
         for (let product of products) {
             let waitingListAmount = await this.waitingListService.getWaitingListAmountByItemId(product.itemNumber);
 
             let workInProgress = await this.waitingListService.getWorkInProgressByItemId(product.itemNumber);
-
+            let productionsProgram = product.productionOrder;
             if (waitingListAmount !== null) {
                 product.waitingQueue = waitingListAmount;
             }
@@ -252,16 +130,147 @@ export class ItemService {
             }
 
             product.productionOrder =
-                product.productionOrder + product.safetyStock - waitingListAmount - workInProgress - product.warehouseStock;
-            
-                await this.entityManager.save(product);
-            
+                product.productionOrder +
+                product.safetyStock -
+                waitingListAmount -
+                workInProgress -
+                product.warehouseStock;
+
+            product.description = `Teilnummer: ${product.itemNumber} Rechnung: Produktionsprogramm(${product.productionOrder}) = Produktionsauftrag(${productionsProgram}) + Sicherheitsbestand(${product.safetyStock}) - In Warteschlange(${waitingListAmount}) - In Arbeit(${workInProgress}) - Warenbestand(${product.warehouseStock})`;
+            await this.entityManager.save(product);
+        }
+
+        for (let product of products) {
             await this.resolveChildren(product, product.productionOrder, product.waitingQueue);
         }
     }
 
     private async resolveChildren(item: Item, parentProdctionOrder: number, parentWaitingList: number) {
         if (item.itemNumber === 1 || item.itemNumber === 2 || item.itemNumber === 3) {
+            let childreen = item.consistsOf;
+            for (var i in childreen) {
+                if (i === null || i === undefined) {
+                    return;
+                }
+                let child = await this.itemRepository.find({
+                    relations: { consistsOf: true },
+                    where: { itemNumber: childreen[i].itemNumber },
+                });
+
+                if (child === null || child === undefined) {
+                    return;
+                }
+                await this.resolveChildren(child[0], item.productionOrder, item.waitingQueue);
+            }
+        } else if (item.itemNumber === 16 || item.itemNumber === 17) {
+            if (item.productionOrder === 0) {
+                let waitingListP51 = await this.waitingListService.getWaitingListAmountByItemId(51);
+                let waitingListP56 = await this.waitingListService.getWaitingListAmountByItemId(56);
+                let waitingListP31 = await this.waitingListService.getWaitingListAmountByItemId(31);
+
+                let itemP51 = await this.itemRepository.find({
+                    where: {
+                        itemNumber: 51,
+                    },
+                });
+
+                let itemP56 = await this.itemRepository.find({
+                    where: {
+                        itemNumber: 56,
+                    },
+                });
+
+                let itemP31 = await this.itemRepository.find({
+                    where: {
+                        itemNumber: 31,
+                    },
+                });
+
+                let waitingListAmount = await this.waitingListService.getWaitingListAmountByItemId(item.itemNumber);
+
+                let workInProgress = await this.waitingListService.getWorkInProgressByItemId(item.itemNumber);
+
+                item.productionOrder =
+                    item.productionOrder +
+                    itemP51[0].productionOrder +
+                    itemP56[0].productionOrder +
+                    itemP31[0].productionOrder +
+                    item.safetyStock +
+                    waitingListP51 +
+                    waitingListP56 +
+                    waitingListP31 -
+                    workInProgress -
+                    waitingListAmount -
+                    item.warehouseStock;
+
+                item.description = `Teilnummer: ${item.itemNumber} Rechnung: Produktionsauftrag(${item.productionOrder}) = Produktionsauftrag E51(${itemP51[0].productionOrder}) + Produktionsauftrag E56(${itemP56[0].productionOrder}) + Produktionsauftrag E31(${itemP31[0].productionOrder}) + Sicherheitsbestand(${item.safetyStock}) + Warteschange E51(${waitingListP51}) + Warteschange E56(${waitingListP56}) + Warteschange E31(${waitingListP31}) - In Arbeit(${workInProgress}) - In Warteschange(${waitingListAmount}) - Warenbestand(${item.warehouseStock})`;
+                console.log(item.description);
+
+                await this.entityManager.save(item);
+            }
+
+            let childreen = item.consistsOf;
+            for (var i in childreen) {
+                if (i === null || i === undefined) {
+                    return;
+                }
+                let child = await this.itemRepository.find({
+                    relations: { consistsOf: true },
+                    where: { itemNumber: childreen[i].itemNumber },
+                });
+
+                if (child === null || child === undefined) {
+                    return;
+                }
+                await this.resolveChildren(child[0], item.productionOrder, item.waitingQueue);
+            }
+        } else if (item.itemNumber === 26) {
+            if (item.productionOrder === 0) {
+                let waitingListP1 = await this.waitingListService.getWaitingListAmountByItemId(1);
+                let waitingListP2 = await this.waitingListService.getWaitingListAmountByItemId(2);
+                let waitingListP3 = await this.waitingListService.getWaitingListAmountByItemId(3);
+
+                let itemP1 = await this.itemRepository.find({
+                    where: {
+                        itemNumber: 1,
+                    },
+                });
+
+                let itemP2 = await this.itemRepository.find({
+                    where: {
+                        itemNumber: 2,
+                    },
+                });
+
+                let itemP3 = await this.itemRepository.find({
+                    where: {
+                        itemNumber: 3,
+                    },
+                });
+
+                let waitingListAmount = await this.waitingListService.getWaitingListAmountByItemId(item.itemNumber);
+
+                let workInProgress = await this.waitingListService.getWorkInProgressByItemId(item.itemNumber);
+
+                item.productionOrder =
+                    item.productionOrder +
+                    itemP1[0].productionOrder +
+                    itemP2[0].productionOrder +
+                    itemP3[0].productionOrder +
+                    item.safetyStock +
+                    waitingListP1 +
+                    waitingListP2 +
+                    waitingListP3 -
+                    workInProgress -
+                    waitingListAmount -
+                    item.warehouseStock;
+
+                item.description = `Teilnummer: ${item.itemNumber} Rechnung: Produktionsauftrag(${item.productionOrder}) = Produktionsauftrag P3(${itemP3[0].productionOrder}) + Produktionsauftrag P2(${itemP2[0].productionOrder}) + Produktionsauftrag P3(${itemP3[0].productionOrder}) + Sicherheitsbestand(${item.safetyStock}) + Warteschange P1(${waitingListP1}) + Warteschange P2(${waitingListP2}) + Warteschange P3(${waitingListP3}) - In Arbeit(${workInProgress}) - In Warteschange(${waitingListAmount}) - Warenbestand(${item.warehouseStock})`;
+                console.log(item.description);
+            }
+
+            await this.entityManager.save(item);
+
             let childreen = item.consistsOf;
             for (var i in childreen) {
                 if (i === null || i === undefined) {
@@ -286,10 +295,17 @@ export class ItemService {
             if (item.productionOrder === 0) {
                 item.productionOrder = parentProdctionOrder;
             }
-            console.log("item.productionOrder = " + item.productionOrder);
+            console.log('item.productionOrder = ' + item.productionOrder);
             item.productionOrder =
-                item.productionOrder + parentWaitingList + item.safetyStock - waitingListAmount - workInProgress - item.warehouseStock;
-            console.log(`itemId: ${item.itemNumber} Rechnung: ${item.productionOrder} = ${parentWaitingList} + ${item.safetyStock} - ${waitingListAmount} - ${workInProgress} - ${item.warehouseStock}`);
+                item.productionOrder +
+                parentWaitingList +
+                item.safetyStock -
+                waitingListAmount -
+                workInProgress -
+                item.warehouseStock;
+
+            item.description = `Teilnummer: ${item.itemNumber} Rechnung: Produktionsauftrag(${item.productionOrder}) = Produktionsauftrag aus Vorgänger(${parentProdctionOrder}) + Warteschlange aus Vorgänger(${parentWaitingList}) + Sicherheitsbestand(${item.safetyStock}) - In Warteschlange(${waitingListAmount}) - In Arbeit(${workInProgress}) - Warenbestand(${item.warehouseStock})`;
+            console.log(item.description);
 
             if (waitingListAmount !== null) {
                 item.waitingQueue = waitingListAmount;

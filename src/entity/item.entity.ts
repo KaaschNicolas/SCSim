@@ -34,6 +34,9 @@ export class Item {
     @Column()
     public productionOrder?: number;
 
+    @Column('nvarchar', { length: 1000 })
+    public description?: string;
+
     @Column()
     public isMultiple?: boolean;
 
